@@ -1,0 +1,12 @@
+import React from "react";
+
+const NotificationsPage = () => {
+  return (
+    <div style={{ padding: "20px" }}>
+      <h2>Notifications</h2>
+      <p>No notifications yet</p>
+    </div>
+  );
+};
+
+export default NotificationsPage;

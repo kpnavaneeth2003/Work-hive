@@ -1,0 +1,56 @@
+import React, { useState } from 'react';
+
+const services = [
+  { id: 'ai_artist', name: 'AI Artists' },
+  { id: 'plumber', name: 'Plumbers' },
+];
+
+const mockProviders = {
+  ai_artist: [
+    { id: 1, name: 'Alice AI Artist', skills: ['AI Art', 'Digital Painting'] },
+    { id: 2, name: 'Bob AI Artist', skills: ['3D AI Modeling', 'Concept Art'] },
+  ],
+  plumber: [
+    { id: 3, name: 'Charlie Plumber', skills: ['Fix leaks', 'Install pipes'] },
+  ],
+};
+
+const ServiceProviders = () => {
+  const [selectedService, setSelectedService] = useState('');
+
+  const providers = selectedService ? mockProviders[selectedService] || [] : [];
+
+  return (
+    <div>
+      <h1>Service Providers</h1>
+      <div>
+        <h3>Select a Service</h3>
+        <ul>
+          {services.map(service => (
+            <li key={service.id}>
+              <button onClick={() => setSelectedService(service.id)}>{service.name}</button>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <h3>Providers for {selectedService.replace('_', ' ') || '...'}</h3>
+        {providers.length === 0 ? (
+          <p>No providers available. Please select a service.</p>
+        ) : (
+          <ul>
+            {providers.map(provider => (
+              <li key={provider.id}>
+                <strong>{provider.name}</strong> - Skills: {provider.skills.join(', ')}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default ServiceProviders;
+
+
