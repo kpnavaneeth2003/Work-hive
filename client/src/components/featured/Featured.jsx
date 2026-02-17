@@ -7,8 +7,14 @@ function Featured() {
   const navigate = useNavigate();
 
   const handleSubmit = () => {
-    navigate(`/gigs?search=${input}`);
+    if (!input.trim()) return; // prevent empty search
+    navigate(`/gigs?search=${encodeURIComponent(input)}`);
   };
+
+  const goToCategory = (cat) => {
+    navigate(`/gigs?cat=${encodeURIComponent(cat)}`);
+  };
+
   return (
     <div className="featured">
       <div className="container">
@@ -16,27 +22,46 @@ function Featured() {
           <h1>
             Get <span>it</span> done
           </h1>
+
+          {/* 🔍 SEARCH */}
           <div className="search">
             <div className="searchInput">
-              <img src="./img/search.png" alt="" />
+              <img src="/img/search.png" alt="" />
               <input
                 type="text"
-                placeholder='Find your service'
+                placeholder="Find your service"
+                value={input}
                 onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
               />
             </div>
             <button onClick={handleSubmit}>Search</button>
           </div>
+
+          {/* ⭐ POPULAR CATEGORIES */}
           <div className="popular">
             <span>Popular:</span>
-            <button>Ac services</button>
-            <button>Plumbing</button>
-            <button>Electricion</button>
-            <button>Airborist</button>
+
+            <button onClick={() => goToCategory("AC Repair")}>
+              AC Repair
+            </button>
+
+            <button onClick={() => goToCategory("Plumbing")}>
+              Plumbing
+            </button>
+
+            <button onClick={() => goToCategory("Electrician")}>
+              Electrician
+            </button>
+
+            <button onClick={() => goToCategory("Carpentry")}>
+              Carpentry
+            </button>
           </div>
         </div>
+
         <div className="right">
-          <img src="./img/man.png" alt="" />
+         
         </div>
       </div>
     </div>
@@ -44,3 +69,4 @@ function Featured() {
 }
 
 export default Featured;
+

@@ -1,72 +1,102 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React from "react";
-import { Link, useParams } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import "./message.scss";
+import { useParams } from "react-router-dom";
 import newRequest from "../../utils/newRequest";
-import "./Message.scss";
 
-const Message = () => {
+function Message() {
   const { id } = useParams();
+  const [messages, setMessages] = useState([]);
+  const [text, setText] = useState("");
+  const scrollRef = useRef();
+
+  // ✅ get current user
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
-  const queryClient = useQueryClient();
+  // ✅ fetch messages
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const res = await newRequest.get(`/messages/${id}`);
+        setMessages(res.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
 
-  const { isLoading, error, data } = useQuery({
-    queryKey: ["messages"],
-    queryFn: () =>
-      newRequest.get(`/messages/${id}`).then((res) => {
-        return res.data;
-      }),
-  });
+    fetchMessages();
+  }, [id]);
 
-  const mutation = useMutation({
-    mutationFn: (message) => {
-      return newRequest.post(`/messages`, message);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["messages"]);
-    },
-  });
+  // ✅ auto scroll to latest
+  useEffect(() => {
+  const markRead = async () => {
+    try {
+      await newRequest.put(`/conversations/${id}/read`);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    mutation.mutate({
-      conversationId: id,
-      desc: e.target[0].value,
-    });
-    e.target[0].value = "";
+  markRead();
+}, [id]);
+
+
+  // ✅ send message
+  const handleSend = async () => {
+    if (!text.trim()) return;
+
+    try {
+      const res = await newRequest.post("/messages", {
+        conversationId: id,
+        desc: text,
+      });
+
+      setMessages((prev) => [...prev, res.data]);
+      setText("");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
-    <div className="message">
-      <div className="container">
-        <span className="breadcrumbs">
-          <Link to="/messages">Messages</Link> &gt; John Doe &gt;
-        </span>
-        {isLoading ? (
-          "loading"
-        ) : error ? (
-          "error"
-        ) : (
-          <div className="messages">
-            {data.map((m) => (
-              <div className={m.userId === currentUser._id ? "owner item" : "item"} key={m._id}>
-                <img
-                  src="https://images.pexels.com/photos/270408/pexels-photo-270408.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                  alt=""
-                />
-                <p>{m.desc}</p>
-              </div>
-            ))}
-          </div>
-        )}
-        <hr />
-        <form className="write" onSubmit={handleSubmit}>
-          <textarea type="text" placeholder="write a message" />
-          <button type="submit">Send</button>
-        </form>
+    <div className="chatPage">
+      <div className="chatContainer">
+        
+        {/* HEADER */}
+        <div className="chatHeader">
+          Messages
+        </div>
+
+        {/* MESSAGE LIST */}
+        <div className="messages">
+          {messages.map((m) => (
+            <div
+              key={m._id}
+              className={`message ${
+                m.userId === currentUser._id ? "owner" : ""
+              }`}
+            >
+              <div className="bubble">{m.desc}</div>
+            </div>
+          ))}
+          <div ref={scrollRef}></div>
+        </div>
+
+        {/* WRITE AREA */}
+        <div className="write">
+          <textarea
+            placeholder="Type your message..."
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            onKeyDown={(e) =>
+              e.key === "Enter" && !e.shiftKey && handleSend()
+            }
+          />
+          <button onClick={handleSend}>Send</button>
+        </div>
+
       </div>
     </div>
   );
-};
+}
 
 export default Message;

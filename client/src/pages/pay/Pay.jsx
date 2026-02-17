@@ -1,49 +1,62 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./Pay.scss";
-import { loadStripe } from "@stripe/stripe-js";
-import { Elements } from "@stripe/react-stripe-js";
+import { useParams, useNavigate } from "react-router-dom";
 import newRequest from "../../utils/newRequest";
-import { useParams } from "react-router-dom";
-import CheckoutForm from "../../components/checkoutForm/CheckoutForm";
-
-const stripePromise = loadStripe(
-  "paste your public key"
-);
 
 const Pay = () => {
-  const [clientSecret, setClientSecret] = useState("");
-
   const { id } = useParams();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const makeRequest = async () => {
-      try {
-        const res = await newRequest.post(
-          `/orders/create-payment-intent/${id}`
-        );
-        setClientSecret(res.data.clientSecret);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    makeRequest();
-  }, []);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
-  const appearance = {
-    theme: 'stripe',
+  // ✅ simulate payment
+  const handlePayment = async () => {
+    try {
+      setLoading(true);
+
+      // simulate network delay
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      // OPTIONAL: create order in DB
+      await newRequest.post("/orders", {
+        gigId: id,
+        payment_intent: "dummy_payment_" + Date.now(),
+      });
+
+      setSuccess(true);
+
+      // redirect after success
+      setTimeout(() => {
+        navigate("/orders");
+      }, 2500);
+
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
   };
-  const options = {
-    clientSecret,
-    appearance,
-  };
 
-  return <div className="pay">
-    {clientSecret && (
-        <Elements options={options} stripe={stripePromise}>
-          <CheckoutForm />
-        </Elements>
+  return (
+    <div className="pay">
+      {success ? (
+        <div className="successBox">
+          <h3>✅ Payment Successful</h3>
+          <p>Transaction ID: TXN{Date.now()}</p>
+        </div>
+      ) : (
+        <div className="payBox">
+          <h2>Complete Payment</h2>
+          <p>Click below to simulate payment.</p>
+
+          <button onClick={handlePayment} disabled={loading}>
+            {loading ? "Processing..." : "Pay Now"}
+          </button>
+        </div>
       )}
-  </div>;
+    </div>
+  );
 };
 
 export default Pay;

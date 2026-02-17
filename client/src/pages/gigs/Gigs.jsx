@@ -8,21 +8,22 @@ import { useLocation } from "react-router-dom";
 function Gigs() {
   const [sort, setSort] = useState("sales");
   const [open, setOpen] = useState(false);
-  const minRef = useRef();
-  const maxRef = useRef();
 
-  const { search } = useLocation();
+  const minRef = useRef(null);
+  const maxRef = useRef(null);
+
+  const { search } = useLocation(); // ?cat=Plumbing
 
   const { isLoading, error, data } = useQuery({
-    queryKey: ["gigs", sort, search],
+    queryKey: ["gigs", search, sort],
     queryFn: async () => {
       const min = minRef.current?.value || 0;
       const max = maxRef.current?.value || 999999;
 
+      const query = search ? `${search}&` : "?";
+
       const res = await newRequest.get(
-        `/gigs${search || "?"}${
-          search ? "&" : ""
-        }min=${min}&max=${max}&sort=${sort}`
+        `/gigs${query}min=${min}&max=${max}&sort=${sort}`
       );
 
       return res.data;
@@ -34,24 +35,19 @@ function Gigs() {
     setOpen(false);
   };
 
-  const apply = () => {
-    // React Query will refetch automatically because queryKey depends on sort/search
-    // To trigger manually, you could use queryClient.invalidateQueries if needed
-  };
-
   return (
     <div className="gigs">
       <div className="container">
-        <span className="breadcrumbs">Liverr &gt; Services</span>
+        <span className="breadcrumbs">Helios &gt; Services &gt;</span>
         <h1>Available Gigs</h1>
         <p>Browse available services from our sellers</p>
 
+        {/* FILTER & SORT */}
         <div className="menu">
           <div className="left">
             <span>Budget</span>
             <input ref={minRef} type="number" placeholder="min" />
             <input ref={maxRef} type="number" placeholder="max" />
-            <button onClick={apply}>Apply</button>
           </div>
 
           <div className="right">
@@ -59,8 +55,9 @@ function Gigs() {
             <span className="sortType">
               {sort === "sales" ? "Best Selling" : "Newest"}
             </span>
+
             <img
-              src="./img/down.png"
+              src="/img/down.png"
               alt=""
               onClick={() => setOpen(!open)}
             />
@@ -77,14 +74,17 @@ function Gigs() {
           </div>
         </div>
 
+        {/* GIG LIST */}
         <div className="cards">
-          {isLoading
-            ? "Loading..."
-            : error
-            ? "Something went wrong!"
-            : data?.map((gig) => (
-                <GigCard key={gig._id} item={gig} />
-              ))}
+          {isLoading && <p>Loading gigs...</p>}
+          {error && <p>Something went wrong!</p>}
+          {!isLoading && data?.length === 0 && <p>No gigs found</p>}
+
+          {!isLoading &&
+            data?.length > 0 &&
+            data.map((gig) => (
+              <GigCard key={gig._id} item={gig} />
+            ))}
         </div>
       </div>
     </div>

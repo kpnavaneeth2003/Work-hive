@@ -1,36 +1,42 @@
-import createError from "../utils/createError.js";
 import Message from "../models/message.model.js";
 import Conversation from "../models/conversation.model.js";
 
+// SEND MESSAGE
 export const createMessage = async (req, res, next) => {
-  const newMessage = new Message({
-    conversationId: req.body.conversationId,
-    userId: req.userId,
-    desc: req.body.desc,
-  });
   try {
+    const newMessage = new Message({
+      conversationId: req.body.conversationId, // seller_buyer
+      userId: req.userId,
+      desc: req.body.desc,
+    });
+
     const savedMessage = await newMessage.save();
+
     await Conversation.findOneAndUpdate(
       { id: req.body.conversationId },
       {
-        $set: {
-          readBySeller: req.isSeller,
-          readByBuyer: !req.isSeller,
-          lastMessage: req.body.desc,
-        },
-      },
-      { new: true }
+        lastMessage: req.body.desc,
+        ...(req.isSeller
+          ? { readBySeller: true, readByBuyer: false }
+          : { readBySeller: false, readByBuyer: true }),
+      }
     );
 
-    res.status(201).send(savedMessage);
+    res.status(201).json(savedMessage);
   } catch (err) {
     next(err);
   }
 };
+
+
+// GET MESSAGES
 export const getMessages = async (req, res, next) => {
   try {
-    const messages = await Message.find({ conversationId: req.params.id });
-    res.status(200).send(messages);
+    const messages = await Message.find({
+      conversationId: req.params.conversationId,
+    });
+
+    res.status(200).json(messages);
   } catch (err) {
     next(err);
   }

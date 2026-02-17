@@ -1,10 +1,20 @@
 import express from "express";
-import { deleteUser, getUser } from "../controllers/user.controller.js";
-import { verifyToken } from "../middleware/jwt.js";
+import User from "../models/user.model.js";
+import { getUser } from "../controllers/user.controller.js";
 
 const router = express.Router();
 
-router.delete("/:id", verifyToken, deleteUser);
+// get all users (needed for chat names)
+router.get("/", async (req, res, next) => {
+  try {
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// get single user
 router.get("/:id", getUser);
 
 export default router;

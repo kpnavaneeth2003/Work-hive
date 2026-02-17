@@ -3,15 +3,15 @@ import {
   createConversation,
   getConversations,
   getSingleConversation,
-  updateConversation,
+  markAsRead,
 } from "../controllers/conversation.controller.js";
 import { verifyToken } from "../middleware/jwt.js";
 
 const router = express.Router();
 
-router.get("/", verifyToken, getConversations);
 router.post("/", verifyToken, createConversation);
+router.get("/", verifyToken, getConversations);
 router.get("/single/:id", verifyToken, getSingleConversation);
-router.put("/:id", verifyToken, updateConversation);
+router.put("/:id/read", verifyToken, markAsRead);
 
 export default router;

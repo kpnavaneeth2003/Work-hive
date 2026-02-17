@@ -1,58 +1,70 @@
-.messages {
+.messagesPage {
   display: flex;
+  height: calc(100vh - 80px);
+}
+
+.sidebar {
+  width: 320px;
+  border-right: 1px solid #eee;
+  padding: 20px;
+}
+
+.conversationItem {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.conversationItem:hover {
+  background: #f7f7f7;
+}
+
+.chatWindow {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.chatWindow.empty {
+  display: flex;
+  align-items: center;
   justify-content: center;
+  color: gray;
+}
+.conversationItem {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  cursor: pointer;
+  align-items: center;
+}
 
-  .container {
-    width: 1400px;
-    padding: 50px 0px;
+.conversationItem.unread {
+  background: #eef2ff;
+  font-weight: 600;
+}
 
-    .title {
-      display: flex;
-      justify-content: space-between;
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
 
-      button {
-        background-color: #1dbf73;
-        color: white;
-        font-weight: 500;
-        border: none;
-        padding: 10px;
-        cursor: pointer;
-      }
-    }
+.username {
+  font-weight: 600;
+}
+.conversationItem {
+  position: relative;
+  padding: 12px;
+  cursor: pointer;
+}
 
-    table {
-      width: 100%;
-
-      tr {
-        height: 100px;
-        th {
-          text-align: left;
-        }
-        td {
-          padding: 10px;
-
-          &:first-child {
-            font-weight: 500;
-          }
-          
-          &:nth-child(2),
-          &:nth-child(3) {
-            color: gray;
-          }
-        }
-
-        button {
-          background-color: #1dbf73;
-          color: white;
-          padding: 10px;
-          border: none;
-          cursor: pointer;
-        }
-
-        &.active {
-          background-color: #1dbf730f;
-        }
-      }
-    }
-  }
+.badge {
+  position: absolute;
+  right: 10px;
+  top: 12px;
+  width: 10px;
+  height: 10px;
+  background: red;
+  border-radius: 50%;
 }

@@ -1,52 +1,71 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./Gig.scss";
 import { Slider } from "infinite-react-carousel/lib";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import newRequest from "../../utils/newRequest";
 import Reviews from "../../components/reviews/Reviews";
+import { AuthContext } from "../../context/AuthContext";
 
 function Gig() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { currentUser } = useContext(AuthContext);
 
+  // Fetch gig data
   const { isLoading, error, data } = useQuery({
-    queryKey: ["gig"],
-    queryFn: () =>
-      newRequest.get(`/gigs/single/${id}`).then((res) => {
-        return res.data;
-      }),
+    queryKey: ["gig", id],
+    queryFn: () => newRequest.get(`/gigs/single/${id}`).then(res => res.data),
   });
 
   const userId = data?.userId;
 
+  // Fetch seller/user data
   const {
     isLoading: isLoadingUser,
     error: errorUser,
     data: dataUser,
   } = useQuery({
-    queryKey: ["user"],
-    queryFn: () =>
-      newRequest.get(`/users/${userId}`).then((res) => {
-        return res.data;
-      }),
+    queryKey: ["user", userId],
+    queryFn: () => newRequest.get(`/users/${userId}`).then(res => res.data),
     enabled: !!userId,
   });
+
+  // ✅ Handle Contact Me button
+const handleContact = async () => {
+  try {
+    if (!data?.userId) return;
+
+    const res = await newRequest.post("/conversations", {
+      to: data.userId,
+    });
+
+    // ✅ use conversation.id (seller_buyer)
+    navigate(`/messages/${res.data.id}`);
+
+  } catch (err) {
+    console.log("Contact Error:", err.response?.data || err.message);
+  }
+};
+
+
 
   return (
     <div className="gig">
       {isLoading ? (
-        "loading"
+        "Loading..."
       ) : error ? (
         "Something went wrong!"
       ) : (
         <div className="container">
           <div className="left">
             <span className="breadcrumbs">
-              Fiverr {">"} Graphics & Design {">"}
+              Helios &gt; {data.cat} &gt;
             </span>
             <h1>{data.title}</h1>
+
             {isLoadingUser ? (
-              "loading"
+              "Loading..."
             ) : errorUser ? (
               "Something went wrong!"
             ) : (
@@ -61,29 +80,29 @@ function Gig() {
                   <div className="stars">
                     {Array(Math.round(data.totalStars / data.starNumber))
                       .fill()
-                      .map((item, i) => (
+                      .map((_, i) => (
                         <img src="/img/star.png" alt="" key={i} />
                       ))}
                     <span>{Math.round(data.totalStars / data.starNumber)}</span>
                   </div>
                 )}
+                <button onClick={handleContact}>Contact Me</button>
               </div>
             )}
+
             {(data.images?.length > 0 || data.cover) && (
-  <Slider>
-    {data.cover && <img src={data.cover} alt="" />}
-    {data.images?.map((img) => (
-      <img key={img} src={img} alt="" />
-    ))}
-  </Slider>
-)}
+              <Slider>
+                {data.cover && <img src={data.cover || "/img/noimage.jpg"} alt="" />}
+                {data.images?.map((img) => (
+                  <img key={img} src={img} alt="" />
+                ))}
+              </Slider>
+            )}
+
             <h2>About This Gig</h2>
             <p>{data.desc}</p>
-            {isLoadingUser ? (
-              "loading"
-            ) : errorUser ? (
-              "Something went wrong!"
-            ) : (
+
+            {isLoadingUser || errorUser ? null : (
               <div className="seller">
                 <h2>About The Seller</h2>
                 <div className="user">
@@ -94,15 +113,13 @@ function Gig() {
                       <div className="stars">
                         {Array(Math.round(data.totalStars / data.starNumber))
                           .fill()
-                          .map((item, i) => (
+                          .map((_, i) => (
                             <img src="/img/star.png" alt="" key={i} />
                           ))}
-                        <span>
-                          {Math.round(data.totalStars / data.starNumber)}
-                        </span>
+                        <span>{Math.round(data.totalStars / data.starNumber)}</span>
                       </div>
                     )}
-                    <button>Contact Me</button>
+                    <button onClick={handleContact}>Contact Me</button>
                   </div>
                 </div>
                 <div className="box">
@@ -133,8 +150,10 @@ function Gig() {
                 </div>
               </div>
             )}
+
             <Reviews gigId={id} />
           </div>
+
           <div className="right">
             <div className="price">
               <h3>{data.shortTitle}</h3>
@@ -144,7 +163,7 @@ function Gig() {
             <div className="details">
               <div className="item">
                 <img src="/img/clock.png" alt="" />
-                <span>{data.deliveryDate} Days Delivery</span>
+                <span>{data.hours} Hours Delivery</span>
               </div>
               <div className="item">
                 <img src="/img/recycle.png" alt="" />
@@ -160,7 +179,7 @@ function Gig() {
               ))}
             </div>
             <Link to={`/pay/${id}`}>
-            <button>Continue</button>
+              <button>Continue</button>
             </Link>
           </div>
         </div>

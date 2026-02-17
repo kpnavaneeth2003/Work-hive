@@ -39,28 +39,33 @@ export const getGig = async (req, res, next) => {
   }
 };
 export const getGigs = async (req, res, next) => {
-  const q = req.query;
-
-  const filters = {
-    ...(q.userId && { userId: q.userId }),
-    ...(q.cat && { cat: q.cat }),
-    ...((q.min || q.max) && {
-      price: {
-        ...(q.min && { $gt: Number(q.min) }),
-        ...(q.max && { $lt: Number(q.max) }),
-      },
-    }),
-    ...(q.search && {
-      title: { $regex: q.search, $options: "i" },
-    }),
-  };
-
   try {
-    const gigs = await Gig.find(filters).sort({
-      [q.sort || "createdAt"]: -1,
+    const q = req.query;
+
+    const filters = {
+      ...(q.userId && { userId: q.userId }),
+      ...(q.cat && { cat: { $regex: q.cat, $options: "i" } }),
+      ...((q.min || q.max) && {
+        price: {
+          ...(q.min && { $gt: Number(q.min) }),
+          ...(q.max && { $lt: Number(q.max) }),
+        },
+      }),
+      ...(q.search && {
+        title: { $regex: q.search, $options: "i" },
+      }),
+    };
+
+    let gigs = await Gig.find(filters).sort({
+      [q.sort]: -1,
     });
 
-    res.status(200).json(gigs);
+    // ⭐ fallback if no gigs found
+    if (gigs.length === 0 && q.cat) {
+      gigs = await Gig.find().sort({ createdAt: -1 });
+    }
+
+    res.status(200).send(gigs);
   } catch (err) {
     next(err);
   }
