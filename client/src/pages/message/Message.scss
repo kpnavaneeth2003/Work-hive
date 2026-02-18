@@ -78,3 +78,14 @@
 .write button:hover {
   background: #17a863;
 }
+.bubble a {
+  display: inline-block;
+  margin-top: 4px;
+  color: #1dbf73;
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+
+.bubble a:hover {
+  text-decoration: underline;
+}

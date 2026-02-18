@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"; 
 import "./messages.scss";
 import { useNavigate } from "react-router-dom";
 import newRequest from "../../utils/newRequest";
@@ -7,14 +7,22 @@ function Messages() {
   const [conversations, setConversations] = useState([]);
   const navigate = useNavigate();
 
-  const currentUser =
-    JSON.parse(localStorage.getItem("currentUser")) || {};
+  const currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
 
+  // Fetch conversations
   useEffect(() => {
     const fetchConversations = async () => {
       try {
         const res = await newRequest.get("/conversations");
-        setConversations(res.data);
+
+        // ✅ Ensure readBySeller / readByBuyer are always booleans
+        const normalizedConvos = res.data.map((c) => ({
+          ...c,
+          readBySeller: !!c.readBySeller,
+          readByBuyer: !!c.readByBuyer,
+        }));
+
+        setConversations(normalizedConvos);
       } catch (err) {
         console.log(err);
       }
@@ -23,10 +31,58 @@ function Messages() {
     fetchConversations();
   }, []);
 
+  // 🔴 Check if conversation is unread
   const isUnread = (c) => {
-    return currentUser.isSeller
-      ? !c.readBySeller
-      : !c.readByBuyer;
+    const isSeller = currentUser.isSeller === true;
+    return isSeller ? !c.readBySeller : !c.readByBuyer;
+  };
+
+  // 📍 Check if last message is a location message
+  const isLastMessageLocation = (c) => {
+    const lastMsg = c.lastMessageObj;
+    return (
+      lastMsg &&
+      lastMsg.location &&
+      Array.isArray(lastMsg.location.coordinates) &&
+      lastMsg.location.coordinates.length === 2
+    );
+  };
+
+  // 📝 Get sidebar preview text
+  const getPreviewText = (c) => {
+    const lastMsg = c.lastMessageObj;
+    if (!lastMsg) return "Open chat";
+
+    if (isLastMessageLocation(c)) {
+      return lastMsg.desc
+        ? `📍 Location - ${lastMsg.desc}`
+        : "📍 Location";
+    }
+
+    return lastMsg.desc || "Open chat";
+  };
+
+  // ✅ Handle conversation click
+  const handleConversationClick = async (c) => {
+    navigate(`/messages/${c.id}`);
+
+    // Mark conversation as read
+    try {
+      await newRequest.put(`/conversations/${c.id}/read`);
+
+      // Update local state to remove unread dot immediately
+      setConversations((prev) =>
+        prev.map((conv) =>
+          conv._id === c._id
+            ? currentUser.isSeller
+              ? { ...conv, readBySeller: true }
+              : { ...conv, readByBuyer: true }
+            : conv
+        )
+      );
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -39,7 +95,7 @@ function Messages() {
           <div
             key={c._id}
             className={`conversationItem ${isUnread(c) ? "unread" : ""}`}
-            onClick={() => navigate(`/messages/${c.id}`)}
+            onClick={() => handleConversationClick(c)}
           >
             {/* PROFILE IMAGE */}
             <img
@@ -54,9 +110,8 @@ function Messages() {
                 {c.user?.username || "User"}
               </span>
 
-              <p className="preview">
-                {c.lastMessage || "Open chat"}
-              </p>
+              {/* PREVIEW */}
+              <p className="preview">{getPreviewText(c)}</p>
             </div>
 
             {/* 🔴 UNREAD DOT */}

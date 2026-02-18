@@ -1,5 +1,7 @@
 import Conversation from "../models/conversation.model.js";
 import User from "../models/user.model.js";
+import Message from "../models/message.model.js"; // ✅ import Message model
+
 // CREATE OR OPEN CHAT
 export const createConversation = async (req, res, next) => {
   try {
@@ -39,7 +41,6 @@ export const createConversation = async (req, res, next) => {
   }
 };
 
-
 // GET USER CONVERSATIONS
 export const getConversations = async (req, res, next) => {
   try {
@@ -49,7 +50,7 @@ export const getConversations = async (req, res, next) => {
         : { buyerId: req.userId }
     ).sort({ updatedAt: -1 });
 
-    // attach other user info
+    // attach other user info and last message object
     const conversationsWithUser = await Promise.all(
       convos.map(async (c) => {
         const otherUserId = req.isSeller ? c.buyerId : c.sellerId;
@@ -58,9 +59,18 @@ export const getConversations = async (req, res, next) => {
           "username img"
         );
 
+        // ✅ Get last message for this conversation
+        const lastMessageObj = await Message.findOne({
+          conversationId: c.id,
+        })
+          .sort({ createdAt: -1 })
+          .lean();
+
         return {
           ...c._doc,
-          user, // 👈 send user info to frontend
+          user, // user info for sidebar
+          lastMessageObj, // full last message object
+          lastMessage: lastMessageObj?.desc || "", // fallback for old frontend
         };
       })
     );
@@ -70,7 +80,6 @@ export const getConversations = async (req, res, next) => {
     next(err);
   }
 };
-
 
 // GET SINGLE CONVERSATION
 export const getSingleConversation = async (req, res, next) => {
@@ -82,6 +91,7 @@ export const getSingleConversation = async (req, res, next) => {
   }
 };
 
+// MARK AS READ
 export const markAsRead = async (req, res, next) => {
   try {
     await Conversation.findOneAndUpdate(
@@ -96,5 +106,3 @@ export const markAsRead = async (req, res, next) => {
     next(err);
   }
 };
-
- 
