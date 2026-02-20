@@ -1,0 +1,60 @@
+.gigsPage {
+  background: white;
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+
+  .pageHeader {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+
+    h3 { margin: 0; }
+
+    input {
+      width: min(420px, 100%);
+      padding: 10px 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      outline: none;
+    }
+  }
+
+  .tableWrap { margin-top: 12px; overflow: auto; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th, td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #eef2f7;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      opacity: 0.7;
+    }
+
+    .title { max-width: 420px; }
+  }
+
+  .btn {
+    border: none;
+    padding: 8px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
+    color: white;
+    background: #111827;
+
+    &.danger { background: #ef4444; }
+  }
+
+  .emptyRow { padding: 18px; text-align: center; opacity: 0.7; }
+}

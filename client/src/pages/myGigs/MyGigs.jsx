@@ -49,7 +49,7 @@ function MyGigs() {
           </div>
           <table>
             <tr>
-              <th>Image</th>
+              
               <th>Title</th>
               <th>Price</th>
               <th>Sales</th>
@@ -57,9 +57,7 @@ function MyGigs() {
             </tr>
             {data.map((gig) => (
               <tr key={gig._id}>
-                <td>
-                  <img className="image" src={gig.cover} alt="" />
-                </td>
+                
                 <td>{gig.title}</td>
                 <td>{gig.price}</td>
                 <td>{gig.sales}</td>

@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import newRequest from "../../utils/newRequest";
 import Reviews from "../../components/reviews/Reviews";
 import { AuthContext } from "../../context/AuthContext";
+import { formatPrice } from "../../utils/formatPrice";
 
 function Gig() {
   const { id } = useParams();
@@ -60,7 +61,7 @@ const handleContact = async () => {
         <div className="container">
           <div className="left">
             <span className="breadcrumbs">
-              Helios &gt; {data.cat} &gt;
+              Workhive &gt; {data.cat} &gt;
             </span>
             <h1>{data.title}</h1>
 
@@ -86,13 +87,13 @@ const handleContact = async () => {
                     <span>{Math.round(data.totalStars / data.starNumber)}</span>
                   </div>
                 )}
-                <button onClick={handleContact}>Contact Me</button>
+                
               </div>
             )}
 
             {(data.images?.length > 0 || data.cover) && (
               <Slider>
-                {data.cover && <img src={data.cover || "/img/noimage.jpg"} alt="" />}
+                {data.cover && <img src={data.cover || "C:\Users\NAVANEETH KRISHNA\projecty\helios\client\public\img\clock.png"} alt="" />}
                 {data.images?.map((img) => (
                   <img key={img} src={img} alt="" />
                 ))}
@@ -130,16 +131,19 @@ const handleContact = async () => {
                     </div>
                     <div className="item">
                       <span className="title">Member since</span>
-                      <span className="desc">Aug 2022</span>
+                      <span className="desc">
+  {new Date(dataUser.createdAt).toLocaleDateString("en-US", {
+    month: "short",
+    year: "numeric",
+  })}
+</span>
+
                     </div>
                     <div className="item">
                       <span className="title">Avg. response time</span>
                       <span className="desc">4 hours</span>
                     </div>
-                    <div className="item">
-                      <span className="title">Last delivery</span>
-                      <span className="desc">1 day</span>
-                    </div>
+                    
                     <div className="item">
                       <span className="title">Languages</span>
                       <span className="desc">English</span>
@@ -157,13 +161,13 @@ const handleContact = async () => {
           <div className="right">
             <div className="price">
               <h3>{data.shortTitle}</h3>
-              <h2>$ {data.price}</h2>
+              <h2>{formatPrice(data.price)}</h2>
             </div>
             <p>{data.shortDesc}</p>
             <div className="details">
               <div className="item">
                 <img src="/img/clock.png" alt="" />
-                <span>{data.hours} Hours Delivery</span>
+                <span>Arrive in {data.hours} Hours </span>
               </div>
               <div className="item">
                 <img src="/img/recycle.png" alt="" />

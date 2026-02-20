@@ -2,48 +2,42 @@ import createError from "../utils/createError.js";
 import Order from "../models/order.model.js";
 import Gig from "../models/gig.model.js";
 
-
-// ✅ CREATE ORDER (Dummy Payment)
 export const createOrder = async (req, res, next) => {
   try {
-    const gig = await Gig.findById(req.body.gigId);
+    const { gigId, payment_intent } = req.body;
 
+    const gig = await Gig.findById(gigId);
     if (!gig) return next(createError(404, "Gig not found"));
 
+    const existing = await Order.findOne({ payment_intent });
+    if (existing) return res.status(200).json(existing);
+
     const newOrder = new Order({
-      gigId: gig._id,
-      img: gig.cover,
+      gigId: gig._id.toString(),
+      img: gig.cover || "",
       title: gig.title,
       buyerId: req.userId,
       sellerId: gig.userId,
       price: gig.price,
-      payment_intent: "dummy_" + Date.now(), // fake transaction id
-      isCompleted: true, // payment instantly successful
+      payment_intent,
+      isCompleted: true,
     });
 
     const savedOrder = await newOrder.save();
-
     res.status(201).json(savedOrder);
-
   } catch (err) {
     next(err);
   }
 };
 
-
-
-// ✅ GET USER ORDERS
 export const getOrders = async (req, res, next) => {
   try {
-    const orders = await Order.find({
-      ...(req.isSeller
-        ? { sellerId: req.userId }
-        : { buyerId: req.userId }),
-      isCompleted: true,
-    });
+    const filter = req.isSeller
+      ? { sellerId: req.userId }
+      : { buyerId: req.userId };
 
+    const orders = await Order.find(filter).sort({ createdAt: -1 });
     res.status(200).json(orders);
-
   } catch (err) {
     next(err);
   }

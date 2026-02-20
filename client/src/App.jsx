@@ -1,11 +1,10 @@
 import React from "react";
 import "./app.scss";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AuthProvider } from "./context/AuthContext.jsx"; // ✅ fixed import
 
 import Navbar from "./components/navbar/Navbar";
 import Footer from "./components/footer/Footer";
+
 import Home from "./pages/home/Home";
 import Gigs from "./pages/gigs/Gigs";
 import Gig from "./pages/gig/Gig";
@@ -21,23 +20,26 @@ import Success from "./pages/success/Success";
 import ServiceProviders from "./pages/ServiceProviders/ServiceProviders";
 import NotificationsPage from "./pages/NotificationsPage/NotificationsPage";
 
-const queryClient = new QueryClient();
+// ✅ Admin
+import AdminRoute from "./routes/AdminRoute";
+import AdminLayout from "./admin/AdminLayout";
+import AdminDashboard from "./admin/pages/Dashboard";
+import AdminUsers from "./admin/pages/Users";
+import AdminGigs from "./admin/pages/Gigs";
+import AdminOrders from "./admin/pages/Orders";
 
 const Layout = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <div className="app">
-          <Navbar />
-          <Outlet />
-          <Footer />
-        </div>
-      </AuthProvider>
-    </QueryClientProvider>
+    <div className="app">
+      <Navbar />
+      <Outlet />
+      <Footer />
+    </div>
   );
 };
 
 const router = createBrowserRouter([
+  // ✅ Normal site routes (with Navbar/Footer)
   {
     path: "/",
     element: <Layout />,
@@ -56,6 +58,23 @@ const router = createBrowserRouter([
       { path: "success", element: <Success /> },
       { path: "service-providers", element: <ServiceProviders /> },
       { path: "notifications", element: <NotificationsPage /> },
+    ],
+  },
+
+  // ✅ Admin routes (no Navbar/Footer)
+  {
+    element: <AdminRoute />,
+    children: [
+      {
+        path: "/admin",
+        element: <AdminLayout />,
+        children: [
+          { index: true, element: <AdminDashboard /> },
+          { path: "users", element: <AdminUsers /> },
+          { path: "gigs", element: <AdminGigs /> },
+          { path: "orders", element: <AdminOrders /> },
+        ],
+      },
     ],
   },
 ]);

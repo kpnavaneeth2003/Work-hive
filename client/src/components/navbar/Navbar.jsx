@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import newRequest from "../../utils/newRequest";
 import "./Navbar.scss";
@@ -6,8 +6,26 @@ import "./Navbar.scss";
 function Navbar() {
   const [active, setActive] = useState(false);
   const [open, setOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const CATEGORIES = [
+  "Plumbing",
+  "Electrician",
+  "Carpentry",
+  "Landscaping",
+  "Cleaning",
+  "Bathroom renovators",
+  "Builders",
+  "Air conditioning services",
+  "Arborist",
+];
+
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+  // ✅ ref for user dropdown container
+  const userMenuRef = useRef(null);
 
   const isActive = () => {
     window.scrollY > 0 ? setActive(true) : setActive(false);
@@ -15,19 +33,40 @@ function Navbar() {
 
   useEffect(() => {
     window.addEventListener("scroll", isActive);
-    return () => {
-      window.removeEventListener("scroll", isActive);
-    };
+    return () => window.removeEventListener("scroll", isActive);
   }, []);
 
-  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+  // ✅ close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
 
-  const navigate = useNavigate();
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+useEffect(() => {
+  const fetchUnread = async () => {
+    try {
+      if (!currentUser) return;
+      const res = await newRequest.get("/messages/unread/count");
+      setUnreadCount(res.data?.count || 0);
+    } catch (err) {}
+  };
+
+  fetchUnread();
+  const interval = setInterval(fetchUnread, 5000);
+  return () => clearInterval(interval);
+}, [currentUser?._id]);
 
   const handleLogout = async () => {
     try {
       await newRequest.post("/auth/logout");
-      localStorage.setItem("currentUser", null);
+      localStorage.removeItem("currentUser"); // ✅ better
+      setOpen(false);
       navigate("/");
     } catch (err) {
       console.log(err);
@@ -43,41 +82,47 @@ function Navbar() {
           </Link>
           <span className="dot">.</span>
         </div>
+
         <div className="links">
-          
-          <span>English</span>
-         
           {currentUser ? (
-            <div className="user" onClick={() => setOpen(!open)}>
+            <div
+              className="user"
+              ref={userMenuRef}
+              onClick={() => setOpen((prev) => !prev)}
+            >
               <img src={currentUser.img || "/img/noavatar.jpg"} alt="" />
               <span>{currentUser?.username}</span>
+
               {open && (
-                <div className="options">
+                <div className="options" onClick={(e) => e.stopPropagation()}>
                   {currentUser.isSeller && (
                     <>
-                      <Link className="link" to="/mygigs">
+                      <Link className="link" to="/mygigs" onClick={() => setOpen(false)}>
                         Gigs
                       </Link>
-                      <Link className="link" to="/add">
+                      <Link className="link" to="/add" onClick={() => setOpen(false)}>
                         Add New Gig
                       </Link>
                     </>
                   )}
-                  <Link className="link" to="/orders">
-                    Orders
+                  <Link className="link" to="/orders" onClick={() => setOpen(false)}>
+                    Services
                   </Link>
-                  <Link className="link" to="/messages">
-                    Messages
-                  </Link>
-                  <Link className="link" onClick={handleLogout}>
+                  <Link className="link msgLink" to="/messages" onClick={() => setOpen(false)}>
+  <span>Messages</span>
+  {unreadCount > 0 && <span className="msgBadge">{unreadCount}</span>}
+</Link>
+                  <span className="link" onClick={handleLogout} style={{ cursor: "pointer" }}>
                     Logout
-                  </Link>
+                  </span>
                 </div>
               )}
             </div>
           ) : (
             <>
-              <Link to="/login" className="link">Sign in</Link>
+              <Link to="/login" className="link">
+                Sign in
+              </Link>
               <Link className="link" to="/register">
                 <button>Join</button>
               </Link>
@@ -85,41 +130,26 @@ function Navbar() {
           )}
         </div>
       </div>
-      {(active || pathname !== "/") && (
-        <>
-          <hr />
-          <div className="menu">
-            <Link className="link menuLink" to="/">
-              Plumbing
-            </Link>
-            <Link className="link menuLink" to="/">
-              Electrician
-            </Link>
-            <Link className="link menuLink" to="/">
-              Carpentry
-            </Link>
-            <Link className="link menuLink" to="/">
-              Landscaping
-            </Link>
-            <Link className="link menuLink" to="/">
-              Cleaning
-            </Link>
-            <Link className="link menuLink" to="/">
-              Bathroom renovators
-            </Link>
-            <Link className="link menuLink" to="/">
-              Builders
-            </Link>
-            <Link className="link menuLink" to="/">
-              Air conditioning services
-            </Link>
-            <Link className="link menuLink" to="/">
-              Airborist
-            </Link>
-          </div>
-          <hr />
-        </>
-      )}
+
+    {(active || pathname !== "/") && (
+  <>
+    <hr />
+
+    <div className="menu">
+      {CATEGORIES.map((cat) => (
+        <Link
+          key={cat}
+          className="link menuLink"
+          to={`/gigs?cat=${encodeURIComponent(cat)}`}
+        >
+          {cat}
+        </Link>
+      ))}
+    </div>
+
+    <hr />
+  </>
+)}
     </div>
   );
 }

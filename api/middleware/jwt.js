@@ -1,15 +1,29 @@
 import jwt from "jsonwebtoken";
-import createError from "../utils/createError.js";
+import User from "../models/user.model.js";
 
-// ✅ Middleware to verify JWT token
 export const verifyToken = (req, res, next) => {
-  const token = req.cookies.access_token; // must match cookie name
-  if (!token) return next(createError(401, "You are not authenticated!"));
+  const token = req.cookies.access_token;
 
-  jwt.verify(token, process.env.JWT_KEY, (err, payload) => {
-    if (err) return next(createError(403, "Token is not valid!"));
-    req.userId = payload.id;
-    req.isSeller = payload.isSeller;
-    next();
+  if (!token) return res.status(401).json("Not authenticated");
+
+  jwt.verify(token, process.env.JWT_KEY, async (err, payload) => {
+    if (err) return res.status(403).json("Token invalid");
+
+    try {
+      // ✅ BAN CHECK on every protected request
+      const user = await User.findById(payload.id).select("isBanned");
+      if (!user) return res.status(401).json("User not found");
+
+      if (user.isBanned) {
+        return res.status(403).json("Account banned");
+      }
+
+      req.userId = payload.id;
+      req.isSeller = payload.isSeller;
+      req.role = payload.role; // optional
+      next();
+    } catch (e) {
+      return res.status(500).json("Server error");
+    }
   });
 };

@@ -43,3 +43,34 @@ export const getMessages = async (req, res) => {
     res.status(500).json(err);
   }
 };
+export const getUnreadCount = async (req, res) => {
+  try {
+    const filter = req.isSeller
+      ? { sellerId: req.userId, readBySeller: false }
+      : { buyerId: req.userId, readByBuyer: false };
+
+    const count = await Conversation.countDocuments(filter);
+    res.status(200).json({ count });
+  } catch (err) {
+    res.status(500).json({ message: "Unread count error" });
+  }
+};
+
+export const markConversationRead = async (req, res) => {
+  try {
+    const conv = await Conversation.findOne({ id: req.params.id });
+    if (!conv) return res.status(404).json({ message: "Conversation not found" });
+
+    if (conv.sellerId !== req.userId && conv.buyerId !== req.userId) {
+      return res.status(403).json({ message: "Not allowed" });
+    }
+
+    if (req.isSeller) conv.readBySeller = true;
+    else conv.readByBuyer = true;
+
+    await conv.save();
+    res.status(200).json({ message: "Marked as read" });
+  } catch (err) {
+    res.status(500).json({ message: "Mark read error" });
+  }
+};

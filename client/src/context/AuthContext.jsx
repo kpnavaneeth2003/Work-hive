@@ -8,27 +8,45 @@ export const AuthProvider = ({ children }) => {
     JSON.parse(localStorage.getItem("currentUser")) || null
   );
 
-  // Optionally, fetch current user from backend on mount
+  // ✅ Refresh user from backend when userId changes
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        if (!currentUser) return;
+        if (!currentUser?._id) return;
+
         const res = await newRequest.get(`/users/${currentUser._id}`);
         setCurrentUser(res.data);
+        localStorage.setItem("currentUser", JSON.stringify(res.data));
       } catch (err) {
         console.log("Failed to fetch user", err);
+
+        // Optional: clear cookie too if something is wrong
+        try {
+          await newRequest.post("/auth/logout");
+        } catch (e) {}
+
         setCurrentUser(null);
+        localStorage.removeItem("currentUser");
       }
     };
-    fetchUser();
-  }, []);
 
+    fetchUser();
+  }, [currentUser?._id]);
+
+  // ✅ Login (store user)
   const login = (user) => {
     setCurrentUser(user);
     localStorage.setItem("currentUser", JSON.stringify(user));
   };
 
-  const logout = () => {
+  // ✅ Logout (IMPORTANT: clear cookie on backend)
+  const logout = async () => {
+    try {
+      await newRequest.post("/auth/logout"); // ✅ clears access_token cookie
+    } catch (err) {
+      console.log("Logout request failed", err);
+    }
+
     setCurrentUser(null);
     localStorage.removeItem("currentUser");
   };

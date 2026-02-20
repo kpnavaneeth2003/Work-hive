@@ -1,0 +1,169 @@
+.adminLayout {
+  --sidebarW: 260px;
+  --sidebarWCollapsed: 76px;
+
+  display: flex;
+  min-height: 100vh;
+  background: #f6f7fb;
+
+  .adminSidebar {
+    width: var(--sidebarW);
+    background: #111827;
+    color: #e5e7eb;
+    padding: 18px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    transition: width 0.2s ease;
+    overflow: hidden;
+  }
+
+  .adminMain {
+    flex: 1;
+    margin-left: var(--sidebarW);
+    padding: 18px 22px;
+    transition: margin-left 0.2s ease;
+  }
+
+  /* Brand */
+  .adminBrand {
+    display: flex;
+    gap: 12px;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    align-items: center;
+  }
+
+  .adminLogo {
+    font-size: 22px;
+    width: 32px;
+    display: grid;
+    place-items: center;
+  }
+
+  .adminTitle {
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .adminSubtitle {
+    font-size: 12px;
+    opacity: 0.8;
+  }
+
+  /* Nav */
+  .adminNav {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    a {
+      text-decoration: none;
+      color: #e5e7eb;
+      padding: 10px 12px;
+      border-radius: 10px;
+      opacity: 0.9;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.08);
+        opacity: 1;
+      }
+    }
+
+    .active {
+      background: rgba(255, 255, 255, 0.12);
+      opacity: 1;
+    }
+
+    .navIcon {
+      width: 28px;
+      display: grid;
+      place-items: center;
+      font-size: 16px;
+    }
+
+    .navText {
+      white-space: nowrap;
+    }
+  }
+
+  /* Topbar */
+  .adminTopbar {
+    background: white;
+    border-radius: 14px;
+    padding: 16px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    p {
+      margin: 4px 0 0 0;
+      opacity: 0.7;
+      font-size: 13px;
+    }
+  }
+
+  .adminTopbarLeft {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .adminToggleBtn {
+    border: none;
+    background: #111827;
+    color: white;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  .adminLogoutBtn {
+    border: none;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: #ef4444;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .adminContent {
+    margin-top: 16px;
+  }
+
+  /* ✅ COLLAPSED MODE */
+  &.isCollapsed {
+    .adminSidebar {
+      width: var(--sidebarWCollapsed);
+      padding: 18px 10px;
+    }
+
+    .adminMain {
+      margin-left: var(--sidebarWCollapsed);
+    }
+
+    .adminBrandText {
+      display: none;
+    }
+
+    .adminNav .navText {
+      display: none;
+    }
+  }
+}

@@ -24,6 +24,13 @@
         }
       }
 
+      /* ✅ NEW: wrapper for search + suggestions dropdown */
+      .searchWrap {
+        position: relative;
+        width: 100%;
+        max-width: 560px; /* adjust if your search area is wider */
+      }
+
       .search {
         background-color: white;
         border-radius: 5px;
@@ -36,6 +43,7 @@
           display: flex;
           align-items: center;
           gap: 10px;
+
           img {
             width: 20px;
             height: 20px;
@@ -45,6 +53,8 @@
           input {
             border: none;
             outline: none;
+            width: 320px; /* ✅ helps keep dropdown aligned */
+            padding-right: 10px;
 
             &::placeholder {
               color: gray;
@@ -61,6 +71,47 @@
           align-self: flex-end;
           cursor: pointer;
         }
+      }
+
+      /* ✅ NEW: suggestions dropdown */
+      .suggestions {
+        position: absolute;
+        top: 58px; /* just below search bar */
+        left: 0;
+        right: 0;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        z-index: 9999;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
+      }
+
+      .suggestionItem {
+        padding: 12px 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #f2f2f2;
+
+        &:hover {
+          background: #f7f7f7;
+        }
+
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+
+      .suggestionText {
+        color: #111;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .suggestionType {
+        color: #666;
+        font-size: 12px;
       }
 
       .popular {
@@ -86,6 +137,7 @@
 
     .right {
       height: 100%;
+
       img {
         height: 100%;
         object-fit: contain;

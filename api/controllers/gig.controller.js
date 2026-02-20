@@ -5,9 +5,10 @@ export const createGig = async (req, res, next) => {
   if (!req.isSeller)
     return next(createError(403, "Only sellers can create a gig!"));
 
+  // ✅ IMPORTANT: userId must be last so req.body can't override it
   const newGig = new Gig({
-    userId: req.userId,
     ...req.body,
+    userId: req.userId,
   });
 
   try {
@@ -44,26 +45,26 @@ export const getGigs = async (req, res, next) => {
 
     const filters = {
       ...(q.userId && { userId: q.userId }),
-      ...(q.cat && { cat: { $regex: q.cat, $options: "i" } }),
+
+      ...(q.cat && {
+        cat: { $regex: q.cat, $options: "i" },
+      }),
+
       ...((q.min || q.max) && {
         price: {
           ...(q.min && { $gt: Number(q.min) }),
           ...(q.max && { $lt: Number(q.max) }),
         },
       }),
+
       ...(q.search && {
         title: { $regex: q.search, $options: "i" },
       }),
     };
 
-    let gigs = await Gig.find(filters).sort({
+    const gigs = await Gig.find(filters).sort({
       [q.sort]: -1,
     });
-
-    // ⭐ fallback if no gigs found
-    if (gigs.length === 0 && q.cat) {
-      gigs = await Gig.find().sort({ createdAt: -1 });
-    }
 
     res.status(200).send(gigs);
   } catch (err) {

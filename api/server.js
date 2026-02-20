@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 
 // Routes
+import adminRoute from "./routes/admin.route.js";
 import authRoute from "./routes/auth.route.js";
 import userRoute from "./routes/user.route.js";
 import gigRoute from "./routes/gig.route.js";
@@ -16,6 +17,7 @@ import messageRoute from "./routes/message.route.js";
 import reviewRoute from "./routes/review.route.js";
 import notificationRoute from "./routes/notification.route.js";
 import categoryRoute from "./routes/category.route.js";
+import searchRoute from "./routes/search.route.js";
 
 const app = express();
 mongoose.set("strictQuery", true);
@@ -26,6 +28,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Routes
+app.use("/api/admin", adminRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
 app.use("/api/gigs", gigRoute);
@@ -35,6 +38,7 @@ app.use("/api/messages", messageRoute);
 app.use("/api/reviews", reviewRoute);
 app.use("/api/notifications", notificationRoute);
 app.use("/api/categories", categoryRoute);
+app.use("/api/search", searchRoute);
 
 // Error handler
 app.use((err, req, res, next) => {

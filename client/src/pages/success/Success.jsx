@@ -5,30 +5,29 @@ import newRequest from "../../utils/newRequest";
 const Success = () => {
   const { search } = useLocation();
   const navigate = useNavigate();
+
   const params = new URLSearchParams(search);
-  const payment_intent = params.get("payment_intent");
+  const gigId = params.get("gigId");
+  const txnId = params.get("txnId");
 
   useEffect(() => {
-    const makeRequest = async () => {
+    const createOrder = async () => {
       try {
-        await newRequest.put("/orders", { payment_intent });
-        setTimeout(() => {
-          navigate("/orders");
-        }, 5000);
+        await newRequest.post("/orders", {
+          gigId,
+          payment_intent: txnId,
+        });
+
+        setTimeout(() => navigate("/orders"), 1500);
       } catch (err) {
         console.log(err);
       }
     };
 
-    makeRequest();
-  }, []);
+    if (gigId && txnId) createOrder();
+  }, [gigId, txnId, navigate]);
 
-  return (
-    <div>
-      Payment successful. You are being redirected to the orders page. Please do
-      not close the page
-    </div>
-  );
+  return <h2>Creating your order...</h2>;
 };
 
 export default Success;

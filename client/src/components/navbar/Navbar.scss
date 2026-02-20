@@ -115,3 +115,19 @@
     font-family: "Montserrat", sans-serif;
   }
 }
+.msgLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.msgBadge {
+  background: #ff4757;
+  color: #fff;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+  line-height: 1.4;
+}

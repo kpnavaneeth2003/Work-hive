@@ -4,44 +4,38 @@ import { QRCodeCanvas } from "qrcode.react";
 import "./Pay.scss";
 
 const Pay = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // gigId
   const navigate = useNavigate();
 
-  const [upiId, setUpiId] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [txnId, setTxnId] = useState("");
-  const [error, setError] = useState("");
 
-  const validateUPI = (upi) => /^[\w.-]+@[\w.-]+$/.test(upi);
+  // ✅ Your UPI (replace with your real one)
+  const merchantUPI = "yourupi@oksbi";
+
+  // ✅ Example price (later fetch from gig API if needed)
+  const amount = 100;
+
+  const upiLink = `upi://pay?pa=${merchantUPI}&pn=Workhive&am=${amount}&cu=INR`;
 
   const handlePayment = async () => {
-    if (!validateUPI(upiId)) {
-      setError("Enter a valid UPI ID (example@upi)");
-      return;
-    }
-
-    setError("");
     setLoading(true);
 
     try {
-      // simulate payment processing delay
-      await new Promise((resolve) => setTimeout(resolve, 2500));
+      // simulate delay after scanning
+      await new Promise((r) => setTimeout(r, 2500));
 
-      // generate fake transaction ID
       const transaction = "TXN" + Date.now();
       setTxnId(transaction);
-
       setSuccess(true);
 
-      // redirect to orders after 2.5s
-      setTimeout(() => navigate("/orders"), 2500);
-    } catch {
-      setError("Unexpected error occurred");
+      setTimeout(() => navigate(`/success?gigId=${id}&txnId=${transaction}`), 1500);
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="pay">
@@ -52,52 +46,25 @@ const Pay = () => {
         </div>
       ) : (
         <div className="payBox">
-          <div className="upiHeader">
-           
-            <h2>UPI Payment</h2>
-          </div>
+          <h2>Scan & Pay</h2>
 
-          <p>Enter your UPI ID or scan the QR to pay</p>
-
-          <input
-            type="text"
-            placeholder="example@upi"
-            value={upiId}
-            onChange={(e) => setUpiId(e.target.value)}
-            disabled={loading}
-          />
-
-          {error && <span className="error">{error}</span>}
-
-          <button onClick={handlePayment} disabled={loading}>
-            {loading ? (
-              <>
-                <span className="loadingDots">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </span>{" "}
-                Processing...
-              </>
-            ) : (
-              "Pay via UPI"
-            )}
-          </button>
-
+          {/* ✅ QR code always visible */}
           <div className="qrBox">
-            {upiId ? (
-              <QRCodeCanvas
-                value={`upi://pay?pa=${upiId}&pn=Workhive&am=100&cu=INR`}
-                size={150}
-                bgColor="#ffffff"
-                fgColor="#000000"
-                level="H"
-                includeMargin={true}
-              />
-            ) : (
-              <div className="qrPlaceholder">Enter UPI ID to generate QR</div>
-            )}
+            <QRCodeCanvas
+              value={upiLink}
+              size={180}
+              bgColor="#ffffff"
+              fgColor="#000000"
+              includeMargin
+            />
           </div>
+
+          <p style={{ marginTop: 10 }}>Scan with any UPI app</p>
+
+          {/* fallback manual button */}
+          <button onClick={handlePayment} disabled={loading}>
+            {loading ? "Waiting for payment..." : "I have paid"}
+          </button>
         </div>
       )}
     </div>

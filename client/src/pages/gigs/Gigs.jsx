@@ -9,8 +9,8 @@ function Gigs() {
   const [sort, setSort] = useState("sales");
   const [open, setOpen] = useState(false);
 
-  const minRef = useRef(null);
-  const maxRef = useRef(null);
+  const minRef = useRef();
+  const maxRef = useRef();
 
   const { search } = useLocation(); // ?cat=Plumbing
 
@@ -18,7 +18,7 @@ function Gigs() {
     queryKey: ["gigs", search, sort],
     queryFn: async () => {
       const min = minRef.current?.value || 0;
-      const max = maxRef.current?.value || 999999;
+      const max = maxRef.current?.value || 1000000;
 
       const query = search ? `${search}&` : "?";
 
@@ -38,16 +38,17 @@ function Gigs() {
   return (
     <div className="gigs">
       <div className="container">
-        <span className="breadcrumbs">Helios &gt; Services &gt;</span>
-        <h1>Available Gigs</h1>
-        <p>Browse available services from our sellers</p>
+        <span className="breadcrumbs">Workhive &gt; Services &gt;</span>
+
+        <h1>Available Services</h1>
+        <p>Browse trusted professionals near you</p>
 
         {/* FILTER & SORT */}
         <div className="menu">
           <div className="left">
-            <span>Budget</span>
-            <input ref={minRef} type="number" placeholder="min" />
-            <input ref={maxRef} type="number" placeholder="max" />
+            <span>Budget (₹)</span>
+            <input ref={minRef} type="number" placeholder="Min ₹" />
+            <input ref={maxRef} type="number" placeholder="Max ₹" />
           </div>
 
           <div className="right">
@@ -60,6 +61,7 @@ function Gigs() {
               src="/img/down.png"
               alt=""
               onClick={() => setOpen(!open)}
+              style={{ cursor: "pointer" }}
             />
 
             {open && (
@@ -76,9 +78,9 @@ function Gigs() {
 
         {/* GIG LIST */}
         <div className="cards">
-          {isLoading && <p>Loading gigs...</p>}
+          {isLoading && <p>Loading services...</p>}
           {error && <p>Something went wrong!</p>}
-          {!isLoading && data?.length === 0 && <p>No gigs found</p>}
+          {!isLoading && data?.length === 0 && <p>No services found</p>}
 
           {!isLoading &&
             data?.length > 0 &&

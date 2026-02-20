@@ -5,7 +5,7 @@ const TrustedBy = () => {
   return (
     <div className="trustedBy">
       <div className="container">
-        <span>Trusted by:</span>
+        <span> CATEGORIES </span>
         
       </div>
     </div>

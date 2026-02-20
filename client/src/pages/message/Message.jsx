@@ -4,12 +4,24 @@ import { useParams } from "react-router-dom";
 import newRequest from "../../utils/newRequest";
 
 function Message() {
-  const { id } = useParams();
+  const { id } = useParams(); // conversation id (your ConversationSchema.id)
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
   const scrollRef = useRef();
 
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+  // ✅ Mark conversation as read when user opens chat
+  useEffect(() => {
+    const markRead = async () => {
+      try {
+        await newRequest.put(`/messages/read/${id}`);
+      } catch (err) {
+        // ignore
+      }
+    };
+    if (id) markRead();
+  }, [id]);
 
   // Fetch messages
   useEffect(() => {
@@ -21,7 +33,7 @@ function Message() {
         console.log(err);
       }
     };
-    fetchMessages();
+    if (id) fetchMessages();
   }, [id]);
 
   // Auto-scroll
@@ -31,15 +43,20 @@ function Message() {
 
   // Send text message
   const handleSendText = async () => {
-    if (!text.trim()) return;
+    const msg = text.trim();
+    if (!msg) return;
 
     try {
       const res = await newRequest.post("/messages", {
         conversationId: id,
-        desc: text,
+        desc: msg,
       });
+
       setMessages((prev) => [...prev, res.data]);
       setText("");
+
+      // ✅ After sending, ensure this conversation is marked read for sender
+      await newRequest.put(`/messages/read/${id}`);
     } catch (err) {
       console.log(err);
     }
@@ -60,7 +77,11 @@ function Message() {
             conversationId: id,
             location: { type: "Point", coordinates: [longitude, latitude] },
           });
+
           setMessages((prev) => [...prev, res.data]);
+
+          // ✅ mark read for sender
+          await newRequest.put(`/messages/read/${id}`);
         } catch (err) {
           console.log(err);
         }
@@ -109,9 +130,12 @@ function Message() {
             placeholder="Type your message..."
             value={text}
             onChange={(e) => setText(e.target.value)}
-            onKeyDown={(e) =>
-              e.key === "Enter" && !e.shiftKey && handleSendText()
-            }
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault(); // ✅ prevent new line
+                handleSendText();
+              }
+            }}
           />
           <button onClick={handleSendText}>Send</button>
           <button
