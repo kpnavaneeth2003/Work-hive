@@ -7,22 +7,30 @@ import { AuthContext } from "../../context/AuthContext";
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // ✅ show/hide
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext); // ✅ use context
+  const { login } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
+    setLoading(true);
+
     try {
-      const res = await newRequest.post("/auth/login", { username, password });
+      const res = await newRequest.post("/auth/login", {
+        username: username.trim(),
+        password,
+      });
 
-      // ✅ use context login instead of localStorage directly
       login(res.data);
-
       navigate("/");
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
+      setError(err.response?.data?.message || err.response?.data || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -41,14 +49,28 @@ function Login() {
         />
 
         <label>Password</label>
-        <input
-          name="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
 
-        <button type="submit">Login</button>
+        {/* ✅ password + toggle */}
+        <div className="passwordField">
+          <input
+            name="password"
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+          <span
+            className="togglePassword"
+            onClick={() => setShowPassword((prev) => !prev)}
+            title={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? "🙈" : "👁️"}
+          </span>
+        </div>
+
+        <button type="submit" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
+        </button>
 
         {error && <span className="error">{error}</span>}
       </form>

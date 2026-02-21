@@ -93,7 +93,7 @@ const handleContact = async () => {
 
             {(data.images?.length > 0 || data.cover) && (
               <Slider>
-                {data.cover && <img src={data.cover || "C:\Users\NAVANEETH KRISHNA\projecty\helios\client\public\img\clock.png"} alt="" />}
+                {data.cover && <img src={data.cover || "/img/noimage.jpg"} alt="" />}
                 {data.images?.map((img) => (
                   <img key={img} src={img} alt="" />
                 ))}
@@ -169,10 +169,7 @@ const handleContact = async () => {
                 <img src="/img/clock.png" alt="" />
                 <span>Arrive in {data.hours} Hours </span>
               </div>
-              <div className="item">
-                <img src="/img/recycle.png" alt="" />
-                <span>{data.revisionNumber} Revisions</span>
-              </div>
+             
             </div>
             <div className="features">
               {data.features.map((feature) => (

@@ -96,14 +96,12 @@ const Add = () => {
             <input name="shortTitle" onChange={handleChange} required />
 
             <label>Short Description</label>
-            <textarea name="shortDesc" onChange={handleChange} required />
+            <textarea name="shortDesc" onChange={handleChange} notrequired />
 
             <label>Estimated Hours</label>
             <input type="number" name="hours" onChange={handleChange} required />
 
-            <label>Revision Number</label>
-            <input type="number" name="revisionNumber" onChange={handleChange} required />
-
+           
             <label>Price</label>
             <input type="number" name="price" onChange={handleChange} required />
 

@@ -105,3 +105,23 @@
     }
   }
 }
+.passwordField {
+  position: relative;
+  width: 100%;
+
+  input {
+    width: 100%;
+    padding-right: 45px;
+    box-sizing: border-box;
+  }
+
+  .togglePassword {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+    user-select: none;
+  }
+}
