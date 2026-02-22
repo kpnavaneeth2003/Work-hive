@@ -18,7 +18,7 @@ function Footer() {
             <span>Kitchen renovation</span>
             <span>Cleaning</span>
             <span>Painters</span>
-            <span>Builders</span>
+           
           </div>
           <div className="item">
             <h2>About</h2>

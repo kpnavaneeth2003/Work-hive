@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import newRequest from "../../utils/newRequest";
 import "./Navbar.scss";
+import { AuthContext } from "../../context/AuthContext";
 
 function Navbar() {
   const [active, setActive] = useState(false);
@@ -10,28 +11,25 @@ function Navbar() {
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
+
+  const { currentUser, logout } = useContext(AuthContext); // ✅ use context
+
   const CATEGORIES = [
-  "Plumbing",
-  "Electrician",
-  "Carpentry",
-  "Landscaping",
-  "Cleaning",
-  "Bathroom renovators",
-  "Builders",
-  "Air conditioning services",
-  "Arborist",
-];
+    "Plumbing",
+    "Electrician",
+    "Carpentry",
+    "Landscaping",
+    "Cleaning",
+    "Bathroom renovators",
+    "Builders",
+    "Air conditioning services",
+    "Arborist",
+  ];
 
-  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-
-  // ✅ ref for user dropdown container
   const userMenuRef = useRef(null);
 
-  const isActive = () => {
-    window.scrollY > 0 ? setActive(true) : setActive(false);
-  };
-
   useEffect(() => {
+    const isActive = () => setActive(window.scrollY > 0);
     window.addEventListener("scroll", isActive);
     return () => window.removeEventListener("scroll", isActive);
   }, []);
@@ -48,29 +46,25 @@ function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-useEffect(() => {
-  const fetchUnread = async () => {
-    try {
-      if (!currentUser) return;
-      const res = await newRequest.get("/messages/unread/count");
-      setUnreadCount(res.data?.count || 0);
-    } catch (err) {}
-  };
+  // ✅ unread message count polling
+  useEffect(() => {
+    const fetchUnread = async () => {
+      try {
+        if (!currentUser?._id) return;
+        const res = await newRequest.get("/messages/unread/count");
+        setUnreadCount(res.data?.count || 0);
+      } catch (err) {}
+    };
 
-  fetchUnread();
-  const interval = setInterval(fetchUnread, 5000);
-  return () => clearInterval(interval);
-}, [currentUser?._id]);
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 5000);
+    return () => clearInterval(interval);
+  }, [currentUser?._id]);
 
   const handleLogout = async () => {
-    try {
-      await newRequest.post("/auth/logout");
-      localStorage.removeItem("currentUser"); // ✅ better
-      setOpen(false);
-      navigate("/");
-    } catch (err) {
-      console.log(err);
-    }
+    setOpen(false);
+    await logout(); // ✅ clears cookie + localStorage + state
+    navigate("/");
   };
 
   return (
@@ -91,7 +85,7 @@ useEffect(() => {
               onClick={() => setOpen((prev) => !prev)}
             >
               <img src={currentUser.img || "/img/noavatar.jpg"} alt="" />
-              <span>{currentUser?.username}</span>
+              <span>{currentUser.username}</span>
 
               {open && (
                 <div className="options" onClick={(e) => e.stopPropagation()}>
@@ -105,14 +99,25 @@ useEffect(() => {
                       </Link>
                     </>
                   )}
+
                   <Link className="link" to="/orders" onClick={() => setOpen(false)}>
                     Services
                   </Link>
-                  <Link className="link msgLink" to="/messages" onClick={() => setOpen(false)}>
-  <span>Messages</span>
-  {unreadCount > 0 && <span className="msgBadge">{unreadCount}</span>}
-</Link>
-                  <span className="link" onClick={handleLogout} style={{ cursor: "pointer" }}>
+
+                  <Link
+                    className="link msgLink"
+                    to="/messages"
+                    onClick={() => setOpen(false)}
+                  >
+                    <span>Messages</span>
+                    {unreadCount > 0 && <span className="msgBadge">{unreadCount}</span>}
+                  </Link>
+
+                  <span
+                    className="link"
+                    onClick={handleLogout}
+                    style={{ cursor: "pointer" }}
+                  >
                     Logout
                   </span>
                 </div>
@@ -131,25 +136,23 @@ useEffect(() => {
         </div>
       </div>
 
-    {(active || pathname !== "/") && (
-  <>
-    <hr />
-
-    <div className="menu">
-      {CATEGORIES.map((cat) => (
-        <Link
-          key={cat}
-          className="link menuLink"
-          to={`/gigs?cat=${encodeURIComponent(cat)}`}
-        >
-          {cat}
-        </Link>
-      ))}
-    </div>
-
-    <hr />
-  </>
-)}
+      {(active || pathname !== "/") && (
+        <>
+          <hr />
+          <div className="menu">
+            {CATEGORIES.map((cat) => (
+              <Link
+                key={cat}
+                className="link menuLink"
+                to={`/gigs?cat=${encodeURIComponent(cat)}`}
+              >
+                {cat}
+              </Link>
+            ))}
+          </div>
+          <hr />
+        </>
+      )}
     </div>
   );
 }

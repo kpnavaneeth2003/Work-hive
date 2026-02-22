@@ -13,13 +13,15 @@ const CATEGORIES = [
   "Landscaping",
   "Cleaning",
   "Air Conditioning",
+  "Bathroom renovators",
+  "Air conditioning services",
   "Painting",
   "Arborist",
 ];
 
 const Add = () => {
-  const [singleFile, setSingleFile] = useState();
-  const [files, setFiles] = useState([]);
+  const [singleFile, setSingleFile] = useState(null);
+  const [files, setFiles] = useState([]); // FileList
   const [uploading, setUploading] = useState(false);
 
   const [state, dispatch] = useReducer(gigReducer, INITIAL_STATE);
@@ -32,17 +34,24 @@ const Add = () => {
   };
 
   const handleUpload = async () => {
+    if (!singleFile) return alert("Please select a cover image first.");
+
     setUploading(true);
     try {
       const cover = await upload(singleFile);
-      const images = await Promise.all(
-        [...files].map((file) => upload(file))
-      );
+      const images =
+        files && files.length > 0
+          ? await Promise.all(Array.from(files).map((file) => upload(file)))
+          : [];
+
       dispatch({ type: "ADD_IMAGES", payload: { cover, images } });
+      alert("Images uploaded successfully!");
     } catch (err) {
-      console.log(err);
+      console.error(err);
+      alert(err?.message || "Upload failed");
+    } finally {
+      setUploading(false);
     }
-    setUploading(false);
   };
 
   const navigate = useNavigate();
@@ -51,13 +60,21 @@ const Add = () => {
   const mutation = useMutation({
     mutationFn: (gig) => newRequest.post("/gigs", gig),
     onSuccess: () => {
-      queryClient.invalidateQueries(["myGigs"]);
+      queryClient.invalidateQueries({ queryKey: ["myGigs"] });
       navigate("/mygigs");
+    },
+    onError: (err) => {
+      console.error(err);
+      alert(err?.response?.data?.message || err?.response?.data || "Create failed");
     },
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (uploading) return alert("Please wait for upload to finish.");
+    if (!state.cover) return alert("Please upload a cover image first.");
+
     mutation.mutate(state);
   };
 
@@ -75,17 +92,28 @@ const Add = () => {
             <select name="cat" onChange={handleChange} required>
               <option value="">Select a category</option>
               {CATEGORIES.map((cat) => (
-                <option key={cat} value={cat}>{cat}</option>
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
               ))}
             </select>
 
             <label>Cover Image</label>
-            <input type="file" onChange={(e) => setSingleFile(e.target.files[0])} />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setSingleFile(e.target.files?.[0] || null)}
+            />
 
             <label>Upload Images</label>
-            <input type="file" multiple onChange={(e) => setFiles(e.target.files)} />
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={(e) => setFiles(e.target.files || [])}
+            />
 
-            <button type="button" onClick={handleUpload}>
+            <button type="button" onClick={handleUpload} disabled={uploading}>
               {uploading ? "uploading..." : "Upload"}
             </button>
 
@@ -96,16 +124,17 @@ const Add = () => {
             <input name="shortTitle" onChange={handleChange} required />
 
             <label>Short Description</label>
-            <textarea name="shortDesc" onChange={handleChange} notrequired />
+            <textarea name="shortDesc" onChange={handleChange} required />
 
             <label>Estimated Hours</label>
-            <input type="number" name="hours" onChange={handleChange} required />
+            <input type="number" name="hours" min={0} onChange={handleChange} required />
 
-           
             <label>Price</label>
-            <input type="number" name="price" onChange={handleChange} required />
+            <input type="number" name="price" min={0} onChange={handleChange} required />
 
-            <button type="submit">Create</button>
+            <button type="submit" disabled={uploading || mutation.isPending}>
+              {mutation.isPending ? "Creating..." : "Create"}
+            </button>
           </form>
         </div>
       </div>

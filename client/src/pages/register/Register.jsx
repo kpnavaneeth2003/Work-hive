@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 function Register() {
   const [file, setFile] = useState(null);
-  const [showPassword, setShowPassword] = useState(false); // ✅ new
+  const [showPassword, setShowPassword] = useState(false);
 
   const [user, setUser] = useState({
     username: "",
@@ -16,6 +16,7 @@ function Register() {
     country: "",
     isSeller: false,
     desc: "",
+    phone: "",
   });
 
   const navigate = useNavigate();
@@ -31,13 +32,10 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const url = file ? await upload(file) : "";
-
     try {
-      await newRequest.post("/auth/register", {
-        ...user,
-        img: url,
-      });
+      const url = file ? await upload(file) : "";
+
+      await newRequest.post("/auth/register", { ...user, img: url });
       navigate("/login");
     } catch (err) {
       console.log(err);
@@ -57,25 +55,23 @@ function Register() {
           <input name="email" type="email" placeholder="email" onChange={handleChange} />
 
           <label>Password</label>
-
-          {/* ✅ password with toggle */}
           <div className="passwordField">
             <input
               name="password"
               type={showPassword ? "text" : "password"}
               onChange={handleChange}
             />
-
             <span
               className="togglePassword"
-              onClick={() => setShowPassword((prev) => !prev)}
+              onClick={() => setShowPassword((p) => !p)}
+              title={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? "🙈" : "👁️"}
             </span>
           </div>
 
           <label>Profile Picture</label>
-          <input type="file" onChange={(e) => setFile(e.target.files[0])} />
+          <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files[0])} />
 
           <label>Country</label>
           <input name="country" type="text" placeholder="India" onChange={handleChange} />

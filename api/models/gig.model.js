@@ -24,32 +24,30 @@ const GigSchema = new Schema(
       default: 0,
     },
     cat: {
-  type: String,
-  enum: [
-    "Plumbing",
-    "Electrician",
-    "Carpentry",
-    "Landscaping",
-    "Cleaning",
-    "Air Conditioning",
-    "Bathroom renovators",
-    "Air conditioning services",
-    "Painting",
-    "Arborist",
-  ],
-  required: true,
-},
+      type: String,
+      enum: [
+        "Plumbing",
+        "Electrician",
+        "Carpentry",
+        "Landscaping",
+        "Cleaning",
+        "Air Conditioning",
+        "Bathroom renovators",
+        "Air conditioning services",
+        "Painting",
+        "Arborist",
+      ],
+      required: true,
+    },
     price: {
       type: Number,
       required: true,
     },
     cover: {
       type: String,
-      required: false,
     },
     images: {
       type: [String],
-      required: false,
     },
     shortTitle: {
       type: String,
@@ -63,22 +61,22 @@ const GigSchema = new Schema(
       type: Number,
       required: true,
     },
+
+    // ⭐ revision removed (or optional with default)
     revisionNumber: {
       type: Number,
-      required: true,
+      default: 0,
     },
+
     features: {
       type: [String],
-      required: false,
     },
     sales: {
       type: Number,
       default: 0,
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 export default mongoose.model("Gig", GigSchema);

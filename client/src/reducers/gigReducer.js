@@ -1,5 +1,4 @@
 export const INITIAL_STATE = {
-  userId: JSON.parse(localStorage.getItem("currentUser"))?._id,
   title: "",
   cat: "",
   cover: "",
@@ -7,30 +6,36 @@ export const INITIAL_STATE = {
   desc: "",
   shortTitle: "",
   shortDesc: "",
- hours: 0,
-  revisionNumber: 0,
+  hours: 0,
   features: [],
   price: 0,
 };
 
+const numberFields = new Set(["price", "hours"]);
+
 export const gigReducer = (state, action) => {
   switch (action.type) {
-    case "CHANGE_INPUT":
+    case "CHANGE_INPUT": {
+      const { name, value } = action.payload;
       return {
         ...state,
-        [action.payload.name]: action.payload.value,
+        [name]: numberFields.has(name) ? Number(value) : value,
       };
+    }
+
     case "ADD_IMAGES":
       return {
         ...state,
         cover: action.payload.cover,
         images: action.payload.images,
       };
+
     case "ADD_FEATURE":
       return {
         ...state,
         features: [...state.features, action.payload],
       };
+
     case "REMOVE_FEATURE":
       return {
         ...state,
