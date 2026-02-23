@@ -43,28 +43,35 @@ export const getGigs = async (req, res, next) => {
   try {
     const q = req.query;
 
+    // ✅ parse numbers safely
+    const min = q.min !== undefined && q.min !== "" ? Number(q.min) : undefined;
+    const max = q.max !== undefined && q.max !== "" ? Number(q.max) : undefined;
+
+    // optional: if invalid numbers
+    if ((min !== undefined && Number.isNaN(min)) || (max !== undefined && Number.isNaN(max))) {
+      return next(createError(400, "Invalid min/max price"));
+    }
+
     const filters = {
       ...(q.userId && { userId: q.userId }),
 
-      ...(q.cat && {
-        cat: { $regex: q.cat, $options: "i" },
-      }),
+      ...(q.cat && { cat: { $regex: q.cat, $options: "i" } }),
 
-      ...((q.min || q.max) && {
+      ...(q.search && { title: { $regex: q.search, $options: "i" } }),
+
+      ...((min !== undefined || max !== undefined) && {
         price: {
-          ...(q.min && { $gt: Number(q.min) }),
-          ...(q.max && { $lt: Number(q.max) }),
+          ...(min !== undefined && { $gte: min }), // ✅ inclusive
+          ...(max !== undefined && { $lte: max }), // ✅ inclusive
         },
-      }),
-
-      ...(q.search && {
-        title: { $regex: q.search, $options: "i" },
       }),
     };
 
-    const gigs = await Gig.find(filters).sort({
-      [q.sort]: -1,
-    });
+    // ✅ whitelist sort fields (prevents weird values)
+    const allowedSort = ["sales", "createdAt", "price"];
+    const sortField = allowedSort.includes(q.sort) ? q.sort : "sales";
+
+    const gigs = await Gig.find(filters).sort({ [sortField]: -1 });
 
     res.status(200).send(gigs);
   } catch (err) {
