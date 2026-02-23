@@ -39,14 +39,6 @@ function Home() {
             </p>
             <div className="title">
               <img src="./img/check.png" alt="" />
-              Protected payments, every time
-            </div>
-            <p>
-              Always know what you&apos;ll pay upfront. Your payment isn&apos;t released
-              until you approve the work.
-            </p>
-            <div className="title">
-              <img src="./img/check.png" alt="" />
               24/7 support
             </div>
             <p>

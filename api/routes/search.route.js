@@ -9,9 +9,10 @@ const CATEGORIES = [
   "Carpentry",
   "Landscaping",
   "Cleaning",
-  "Air Conditioning",
+  "Air Conditioning services",
   "Painting",
   "Arborist",
+  "Bathroom renovators",
 ];
 
 router.get("/suggestions", async (req, res) => {

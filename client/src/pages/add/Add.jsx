@@ -12,7 +12,6 @@ const CATEGORIES = [
   "Carpentry",
   "Landscaping",
   "Cleaning",
-  "Air Conditioning",
   "Bathroom renovators",
   "Air conditioning services",
   "Painting",

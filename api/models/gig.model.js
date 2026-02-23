@@ -31,7 +31,6 @@ const GigSchema = new Schema(
         "Carpentry",
         "Landscaping",
         "Cleaning",
-        "Air Conditioning",
         "Bathroom renovators",
         "Air conditioning services",
         "Painting",
