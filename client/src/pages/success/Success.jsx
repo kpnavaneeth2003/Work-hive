@@ -1,16 +1,23 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import newRequest from "../../utils/newRequest";
 
 const Success = () => {
   const { search } = useLocation();
   const navigate = useNavigate();
+  const ran = useRef(false); // ✅ prevents duplicate call
 
   const params = new URLSearchParams(search);
   const gigId = params.get("gigId");
   const txnId = params.get("txnId");
 
   useEffect(() => {
+    if (!gigId || !txnId) return;
+
+    // ✅ React StrictMode runs effects twice in dev
+    if (ran.current) return;
+    ran.current = true;
+
     const createOrder = async () => {
       try {
         await newRequest.post("/orders", {
@@ -24,7 +31,7 @@ const Success = () => {
       }
     };
 
-    if (gigId && txnId) createOrder();
+    createOrder();
   }, [gigId, txnId, navigate]);
 
   return <h2>Creating your order...</h2>;

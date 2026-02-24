@@ -42,6 +42,7 @@ const Orders = () => {
           <table>
             <thead>
               <tr>
+                <th>{currentUser?.isSeller ? "Buyer" : "Seller"}</th>
                 <th>Title</th>
                 <th>Price</th>
                 <th>Status</th>
@@ -57,6 +58,11 @@ const Orders = () => {
               ) : (
                 data.map((order) => (
                   <tr key={order._id}>
+                    <td>
+                      {currentUser?.isSeller
+                      ? order.buyerName || "Unknown"
+                      : order.sellerName || "Unknown"}
+                    </td>
                     <td>{order.title}</td>
                     <td>₹{order.price}</td>
                     <td>{order.isCompleted ? "Completed" : "Pending"}</td>

@@ -1,6 +1,7 @@
 import createError from "../utils/createError.js";
 import Order from "../models/order.model.js";
 import Gig from "../models/gig.model.js";
+import User from "../models/user.model.js";
 
 export const createOrder = async (req, res, next) => {
   try {
@@ -30,6 +31,7 @@ export const createOrder = async (req, res, next) => {
   }
 };
 
+
 export const getOrders = async (req, res, next) => {
   try {
     const filter = req.isSeller
@@ -37,7 +39,31 @@ export const getOrders = async (req, res, next) => {
       : { buyerId: req.userId };
 
     const orders = await Order.find(filter).sort({ createdAt: -1 });
-    res.status(200).json(orders);
+
+    const enrichedOrders = await Promise.all(
+      orders.map(async (order) => {
+        let buyerName = "Unknown";
+        let sellerName = "Unknown";
+
+        try {
+          const buyer = await User.findById(order.buyerId).select("username");
+          const seller = await User.findById(order.sellerId).select("username");
+
+          buyerName = buyer?.username || "Unknown";
+          sellerName = seller?.username || "Unknown";
+        } catch (e) {
+          console.log("User fetch error:", e.message);
+        }
+
+        return {
+          ...order._doc,
+          buyerName,
+          sellerName,
+        };
+      })
+    );
+
+    res.status(200).json(enrichedOrders);
   } catch (err) {
     next(err);
   }
