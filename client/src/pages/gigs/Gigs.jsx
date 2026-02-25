@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import newRequest from "../../utils/newRequest";
 import { useLocation } from "react-router-dom";
 
-// Debounce hook (auto filtering while typing, but not spamming API)
+
 function useDebounce(value, delay = 400) {
   const [debounced, setDebounced] = useState(value);
 
@@ -21,17 +21,17 @@ function Gigs() {
   const [sort, setSort] = useState("sales");
   const [open, setOpen] = useState(false);
 
-  // Budget inputs as state
+  
   const [min, setMin] = useState("");
   const [max, setMax] = useState("");
 
-  const { search } = useLocation(); // e.g. "?cat=Plumbing"
+  const { search } = useLocation(); 
 
-  // Debounced values (refetch only after user pauses typing)
+
   const debouncedMin = useDebounce(min, 400);
   const debouncedMax = useDebounce(max, 400);
 
-  // Convert to numbers for validation + queryKey stability
+
   const minValue = debouncedMin === "" ? 0 : Number(debouncedMin);
   const maxValue = debouncedMax === "" ? Infinity : Number(debouncedMax);
 
@@ -40,13 +40,13 @@ function Gigs() {
 
   const { isLoading, error, data } = useQuery({
     queryKey: ["gigs", search, sort, debouncedMin, debouncedMax],
-    enabled: !isInvalidRange, // ✅ don't refetch if min > max
-    keepPreviousData: true,   // ✅ avoid flicker on refetch
+    enabled: !isInvalidRange, 
+    keepPreviousData: true,   
     queryFn: async () => {
-      // Build query params safely (keeps existing ?cat=... etc.)
+      
       const params = new URLSearchParams(search ? search.slice(1) : "");
 
-      // Only send min/max if user actually typed them
+      
       if (debouncedMin !== "") params.set("min", debouncedMin);
       if (debouncedMax !== "") params.set("max", debouncedMax);
 
@@ -70,7 +70,7 @@ function Gigs() {
         <h1>Available Services</h1>
         <p>Browse trusted professionals near you</p>
 
-        {/* FILTER & SORT */}
+       
         <div className="menu">
           <div className="left">
             <span>Budget (₹)</span>
@@ -121,7 +121,7 @@ function Gigs() {
           </div>
         </div>
 
-        {/* GIG LIST */}
+        
         <div className="cards">
           {isLoading && <p>Loading services...</p>}
           {error && <p>Something went wrong!</p>}

@@ -15,7 +15,7 @@ const GigCard = ({ item }) => {
   return (
     <Link to={`/gig/${item._id}`} className="link">
       <div className="gigCard">
-        {/* ✅ Option B: render image ONLY if cover exists */}
+        
         {item.cover?.trim() ? (
           <img className="coverImg" src={item.cover} alt={item.title || ""} />
         ) : (

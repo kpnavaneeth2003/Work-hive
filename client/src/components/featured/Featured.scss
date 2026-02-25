@@ -24,11 +24,11 @@
         }
       }
 
-      /* ✅ NEW: wrapper for search + suggestions dropdown */
+      
       .searchWrap {
         position: relative;
         width: 100%;
-        max-width: 560px; /* adjust if your search area is wider */
+        max-width: 560px; 
       }
 
       .search {
@@ -53,7 +53,7 @@
           input {
             border: none;
             outline: none;
-            width: 320px; /* ✅ helps keep dropdown aligned */
+            width: 320px; 
             padding-right: 10px;
 
             &::placeholder {
@@ -73,10 +73,10 @@
         }
       }
 
-      /* ✅ NEW: suggestions dropdown */
+      
       .suggestions {
         position: absolute;
-        top: 58px; /* just below search bar */
+        top: 58px; 
         left: 0;
         right: 0;
         background: white;

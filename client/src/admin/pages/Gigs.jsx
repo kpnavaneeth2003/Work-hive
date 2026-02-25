@@ -59,7 +59,7 @@ export default function Gigs() {
                   <td className="title">{g.title}</td>
                   <td>{g.cat || "-"}</td>
                   <td>{g.price ?? "-"}</td>
-                  {/* ✅ seller info from backend */}
+                  {/* seller info from backend */}
                   <td>{g.userIdUser?.username || g.userId || "-"}</td>
                   <td>{g.createdAt ? new Date(g.createdAt).toLocaleDateString() : "-"}</td>
                   <td>

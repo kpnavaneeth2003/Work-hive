@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.post("/", verifyToken, createMessage);
 
-// ✅ keep these BEFORE "/:conversationId"
+
 router.get("/unread/count", verifyToken, getUnreadCount);
 router.put("/read/:id", verifyToken, markConversationRead);
 

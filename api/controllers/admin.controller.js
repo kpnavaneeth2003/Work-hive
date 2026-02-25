@@ -2,7 +2,7 @@ import User from "../models/user.model.js";
 import Gig from "../models/gig.model.js";
 import Order from "../models/order.model.js";
 
-// Attach usernames/emails for string-based userId fields
+
 const attachUserInfo = async (docs, fields) => {
   const ids = new Set();
 
@@ -27,7 +27,7 @@ const attachUserInfo = async (docs, fields) => {
   });
 };
 
-// GET /api/admin/stats
+
 export const getAdminStats = async (req, res) => {
   try {
     const [totalUsers, totalSellers, totalGigs, totalOrders, completedOrders] =
@@ -58,7 +58,7 @@ export const getAdminStats = async (req, res) => {
   }
 };
 
-// GET /api/admin/users
+
 export const listUsers = async (req, res) => {
   try {
     const users = await User.find({}).select("-password").sort({ createdAt: -1 });
@@ -68,7 +68,7 @@ export const listUsers = async (req, res) => {
   }
 };
 
-// PATCH /api/admin/users/:id/ban  (toggle)
+
 export const toggleBanUser = async (req, res) => {
   try {
     const u = await User.findById(req.params.id).select("isBanned role");
@@ -85,18 +85,18 @@ export const toggleBanUser = async (req, res) => {
   }
 };
 
-// GET /api/admin/gigs
+
 export const listGigs = async (req, res) => {
   try {
     const gigs = await Gig.find({}).sort({ createdAt: -1 });
-    const withSeller = await attachUserInfo(gigs, ["userId"]); // ✅ Gig.userId string
+    const withSeller = await attachUserInfo(gigs, ["userId"]); 
     res.json(withSeller);
   } catch (err) {
     res.status(500).json("Failed to load gigs");
   }
 };
 
-// DELETE /api/admin/gigs/:id
+
 export const deleteGigByAdmin = async (req, res) => {
   try {
     const gig = await Gig.findById(req.params.id);
@@ -109,12 +109,12 @@ export const deleteGigByAdmin = async (req, res) => {
   }
 };
 
-// GET /api/admin/orders
+
 export const listOrders = async (req, res) => {
   try {
     const orders = await Order.find({}).sort({ createdAt: -1 });
 
-    // ✅ Order.buyerId & Order.sellerId are strings
+
     const withUsers = await attachUserInfo(orders, ["buyerId", "sellerId"]);
     res.json(withUsers);
   } catch (err) {

@@ -12,7 +12,7 @@ const upload = async (file) => {
 
   const data = new FormData();
   data.append("file", file);
-  data.append("upload_preset", "workhive"); // ⭐ your preset name
+  data.append("upload_preset", "workhive"); 
 
   const res = await axios.post(uploadUrl, data, {
     headers: { "Content-Type": "multipart/form-data" },

@@ -5,7 +5,7 @@ import newRequest from "../../utils/newRequest";
 const Success = () => {
   const { search } = useLocation();
   const navigate = useNavigate();
-  const ran = useRef(false); // ✅ prevents duplicate call
+  const ran = useRef(false); 
 
   const params = new URLSearchParams(search);
   const gigId = params.get("gigId");
@@ -14,7 +14,7 @@ const Success = () => {
   useEffect(() => {
     if (!gigId || !txnId) return;
 
-    // ✅ React StrictMode runs effects twice in dev
+  
     if (ran.current) return;
     ran.current = true;
 

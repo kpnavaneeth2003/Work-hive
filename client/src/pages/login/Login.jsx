@@ -7,7 +7,7 @@ import { AuthContext } from "../../context/AuthContext";
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // ✅ show/hide
+  const [showPassword, setShowPassword] = useState(false); 
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -50,7 +50,7 @@ function Login() {
 
         <label>Password</label>
 
-        {/* ✅ password + toggle */}
+      
         <div className="passwordField">
           <input
             name="password"

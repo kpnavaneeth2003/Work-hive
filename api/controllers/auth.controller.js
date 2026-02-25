@@ -21,20 +21,20 @@ export const login = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // ✅ Ban check (block login)
+
     if (user.isBanned) {
       return res
         .status(403)
         .json({ message: "Your account is banned. Contact admin." });
     }
 
-    // ✅ Correct password check (bcrypt)
+    
     const isCorrect = bcrypt.compareSync(req.body.password, user.password);
     if (!isCorrect) {
       return res.status(400).json({ message: "Wrong password" });
     }
 
-    // ✅ Include role also (useful)
+
     const token = jwt.sign(
       { id: user._id, isSeller: user.isSeller, role: user.role },
       process.env.JWT_KEY,
@@ -47,8 +47,8 @@ export const login = async (req, res) => {
       .cookie("access_token", token, {
         httpOnly: true,
         sameSite: "lax",
-        secure: false, // localhost
-        path: "/",     // ✅ important (must match clearCookie)
+        secure: false, 
+        path: "/",     
       })
       .status(200)
       .json(info);
@@ -63,7 +63,7 @@ export const logout = (req, res) => {
       httpOnly: true,
       sameSite: "lax",
       secure: false,
-      path: "/", // ✅ must match login cookie path
+      path: "/",
     })
     .status(200)
     .json({ message: "Logged out" });

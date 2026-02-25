@@ -11,19 +11,19 @@ function Message() {
 
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
-  // ✅ Mark conversation as read when user opens chat
+
   useEffect(() => {
     const markRead = async () => {
       try {
         await newRequest.put(`/messages/read/${id}`);
       } catch (err) {
-        // ignore
+        
       }
     };
     if (id) markRead();
   }, [id]);
 
-  // Fetch messages
+
   useEffect(() => {
     const fetchMessages = async () => {
       try {
@@ -36,12 +36,12 @@ function Message() {
     if (id) fetchMessages();
   }, [id]);
 
-  // Auto-scroll
+ 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Send text message
+ 
   const handleSendText = async () => {
     const msg = text.trim();
     if (!msg) return;
@@ -55,14 +55,14 @@ function Message() {
       setMessages((prev) => [...prev, res.data]);
       setText("");
 
-      // ✅ After sending, ensure this conversation is marked read for sender
+     
       await newRequest.put(`/messages/read/${id}`);
     } catch (err) {
       console.log(err);
     }
   };
 
-  // Send location message
+  
   const handleSendLocation = () => {
     if (!navigator.geolocation) {
       return alert("Geolocation not supported by your browser");
@@ -80,7 +80,7 @@ function Message() {
 
           setMessages((prev) => [...prev, res.data]);
 
-          // ✅ mark read for sender
+          
           await newRequest.put(`/messages/read/${id}`);
         } catch (err) {
           console.log(err);
@@ -93,10 +93,10 @@ function Message() {
   return (
     <div className="chatPage">
       <div className="chatContainer">
-        {/* HEADER */}
+        
         <div className="chatHeader">Messages</div>
 
-        {/* MESSAGE LIST */}
+        
         <div className="messages">
           {messages.map((m) => (
             <div
@@ -124,7 +124,7 @@ function Message() {
           <div ref={scrollRef}></div>
         </div>
 
-        {/* WRITE AREA */}
+        
         <div className="write">
           <textarea
             placeholder="Type your message..."
@@ -132,7 +132,7 @@ function Message() {
             onChange={(e) => setText(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault(); // ✅ prevent new line
+                e.preventDefault(); 
                 handleSendText();
               }
             }}

@@ -1,8 +1,8 @@
 import Conversation from "../models/conversation.model.js";
 import User from "../models/user.model.js";
-import Message from "../models/message.model.js"; // ✅ import Message model
+import Message from "../models/message.model.js"; 
 
-// CREATE OR OPEN CHAT
+
 export const createConversation = async (req, res, next) => {
   try {
     const { to } = req.body;
@@ -41,7 +41,7 @@ export const createConversation = async (req, res, next) => {
   }
 };
 
-// GET USER CONVERSATIONS
+
 export const getConversations = async (req, res, next) => {
   try {
     const convos = await Conversation.find(
@@ -50,7 +50,7 @@ export const getConversations = async (req, res, next) => {
         : { buyerId: req.userId }
     ).sort({ updatedAt: -1 });
 
-    // attach other user info and last message object
+    
     const conversationsWithUser = await Promise.all(
       convos.map(async (c) => {
         const otherUserId = req.isSeller ? c.buyerId : c.sellerId;
@@ -59,7 +59,7 @@ export const getConversations = async (req, res, next) => {
           "username img"
         );
 
-        // ✅ Get last message for this conversation
+        
         const lastMessageObj = await Message.findOne({
           conversationId: c.id,
         })
@@ -68,9 +68,9 @@ export const getConversations = async (req, res, next) => {
 
         return {
           ...c._doc,
-          user, // user info for sidebar
-          lastMessageObj, // full last message object
-          lastMessage: lastMessageObj?.desc || "", // fallback for old frontend
+          user, 
+          lastMessageObj, 
+          lastMessage: lastMessageObj?.desc || "", 
         };
       })
     );
@@ -81,7 +81,7 @@ export const getConversations = async (req, res, next) => {
   }
 };
 
-// GET SINGLE CONVERSATION
+
 export const getSingleConversation = async (req, res, next) => {
   try {
     const convo = await Conversation.findOne({ id: req.params.id });
@@ -91,7 +91,7 @@ export const getSingleConversation = async (req, res, next) => {
   }
 };
 
-// MARK AS READ
+
 export const markAsRead = async (req, res, next) => {
   try {
     await Conversation.findOneAndUpdate(

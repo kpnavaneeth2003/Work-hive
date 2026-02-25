@@ -12,7 +12,7 @@ function Navbar() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  const { currentUser, logout } = useContext(AuthContext); // ✅ use context
+  const { currentUser, logout } = useContext(AuthContext); 
 
   const CATEGORIES = [
     "Plumbing",
@@ -34,7 +34,7 @@ function Navbar() {
     return () => window.removeEventListener("scroll", isActive);
   }, []);
 
-  // ✅ close dropdown when clicking outside
+  
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
@@ -46,7 +46,7 @@ function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // ✅ unread message count polling
+  
   useEffect(() => {
     const fetchUnread = async () => {
       try {
@@ -63,7 +63,7 @@ function Navbar() {
 
   const handleLogout = async () => {
     setOpen(false);
-    await logout(); // ✅ clears cookie + localStorage + state
+    await logout(); 
     navigate("/");
   };
 

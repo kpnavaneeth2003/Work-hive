@@ -22,12 +22,12 @@ router.get("/suggestions", async (req, res) => {
 
     const qLower = q.toLowerCase();
 
-    // Category suggestions
+    
     const catMatches = CATEGORIES.filter((c) => c.toLowerCase().includes(qLower))
       .slice(0, 5)
       .map((c) => ({ type: "cat", value: c }));
 
-    // Gig title suggestions
+    
     const gigMatches = await Gig.find({
       title: { $regex: q, $options: "i" },
     })

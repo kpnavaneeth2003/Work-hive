@@ -15,7 +15,7 @@ async function seed() {
   try {
     await mongoose.connect("mongodb://127.0.0.1:27017/helios");
 
-    await Category.deleteMany(); // remove if you want duplicates removed
+    await Category.deleteMany(); 
 
     await Category.insertMany(categories);
 

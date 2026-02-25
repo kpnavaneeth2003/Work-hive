@@ -61,7 +61,7 @@ const GigSchema = new Schema(
       required: true,
     },
 
-    // ⭐ revision removed (or optional with default)
+    
     revisionNumber: {
       type: Number,
       default: 0,

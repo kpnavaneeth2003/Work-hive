@@ -24,7 +24,7 @@ export const createReview = async (req, res, next) => {
         createError(403, "You have already created a review for this gig!")
       );
 
-    //TODO: check if the user purchased the gig.
+    
 
     const savedReview = await newReview.save();
 
@@ -37,10 +37,23 @@ export const createReview = async (req, res, next) => {
   }
 };
 
+import User from "../models/user.model.js";
+
 export const getReviews = async (req, res, next) => {
   try {
-    const reviews = await Review.find({ gigId: req.params.gigId });
-    res.status(200).send(reviews);
+    const reviews = await Review.find({ gigId: req.params.gigId }).sort({ createdAt: -1 });
+
+    const userIds = [...new Set(reviews.map((r) => r.userId))];
+
+    const users = await User.find({ _id: { $in: userIds } }).select("_id username");
+    const map = new Map(users.map((u) => [String(u._id), u.username]));
+
+    const enriched = reviews.map((r) => ({
+      ...r._doc,
+      username: map.get(String(r.userId)) || "Unknown",
+    }));
+
+    res.status(200).send(enriched);
   } catch (err) {
     next(err);
   }

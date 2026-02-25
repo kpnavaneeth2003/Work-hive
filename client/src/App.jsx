@@ -39,7 +39,7 @@ const Layout = () => {
 };
 
 const router = createBrowserRouter([
-  // ✅ Normal site routes (with Navbar/Footer)
+ 
   {
     path: "/",
     element: <Layout />,
@@ -61,7 +61,7 @@ const router = createBrowserRouter([
     ],
   },
 
-  // ✅ Admin routes (no Navbar/Footer)
+  
   {
     element: <AdminRoute />,
     children: [

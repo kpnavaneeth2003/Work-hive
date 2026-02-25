@@ -26,7 +26,7 @@
     transition: margin-left 0.2s ease;
   }
 
-  /* Brand */
+  
   .adminBrand {
     display: flex;
     gap: 12px;
@@ -54,7 +54,7 @@
     opacity: 0.8;
   }
 
-  /* Nav */
+  
   .adminNav {
     margin-top: 18px;
     display: flex;
@@ -94,7 +94,7 @@
     }
   }
 
-  /* Topbar */
+  
   .adminTopbar {
     background: white;
     border-radius: 14px;
@@ -147,7 +147,7 @@
     margin-top: 16px;
   }
 
-  /* ✅ COLLAPSED MODE */
+  
   &.isCollapsed {
     .adminSidebar {
       width: var(--sidebarWCollapsed);

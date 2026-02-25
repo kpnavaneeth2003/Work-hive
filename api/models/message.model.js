@@ -4,10 +4,10 @@ const MessageSchema = new mongoose.Schema(
   {
     conversationId: String,
     userId: String,
-    desc: String, // optional for location messages
+    desc: String, 
     location: {
       type: { type: String, enum: ["Point"], default: "Point" },
-      coordinates: { type: [Number] }, // [longitude, latitude]
+      coordinates: { type: [Number] }, 
     },
   },
   { timestamps: true }

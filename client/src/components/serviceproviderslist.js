@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
 const mockProviders = {
-  ai_artist: [
-    { id: 1, name: 'Alice AI Artist', skills: ['AI Art', 'Digital Painting'] },
-    { id: 2, name: 'Bob AI Artist', skills: ['3D AI Modeling', 'Concept Art'] },
+  electrician: [
+    { id: 1, name: 'Alice Electrician', skills: ['Wiring', 'Lighting'] },
+    { id: 2, name: 'Bob Electrician', skills: ['Circuit repair', 'Appliance installation'] },
   ],
   plumber: [
     { id: 3, name: 'Charlie Plumber', skills: ['Fix leaks', 'Install pipes'] },
   ],
-  // add more categories and providers as needed
+  
 };
 
 const ServiceProvidersList = ({ service }) => {
@@ -16,7 +16,7 @@ const ServiceProvidersList = ({ service }) => {
 
   useEffect(() => {
     if (service) {
-      // Simulate fetching data from the backend for the selected service
+      
       setProviders(mockProviders[service] || []);
     } else {
       setProviders([]);

@@ -10,7 +10,7 @@ export const verifyToken = (req, res, next) => {
     if (err) return res.status(403).json("Token invalid");
 
     try {
-      // ✅ BAN CHECK on every protected request
+    
       const user = await User.findById(payload.id).select("isBanned");
       if (!user) return res.status(401).json("User not found");
 
@@ -20,7 +20,7 @@ export const verifyToken = (req, res, next) => {
 
       req.userId = payload.id;
       req.isSeller = payload.isSeller;
-      req.role = payload.role; // optional
+      req.role = payload.role; 
       next();
     } catch (e) {
       return res.status(500).json("Server error");

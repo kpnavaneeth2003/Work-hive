@@ -10,17 +10,17 @@ const UserSchema = new mongoose.Schema(
     phone: { type: String },
     desc: { type: String },
 
-    // existing seller field
+    
     isSeller: { type: Boolean, default: false },
 
-    // ✅ new role field (admin support)
+    
     role: {
       type: String,
       enum: ["buyer", "seller", "admin"],
       default: "buyer",
     },
 
-    // ✅ ban control
+    
     isBanned: {
       type: Boolean,
       default: false,

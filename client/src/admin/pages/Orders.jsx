@@ -56,7 +56,7 @@ export default function Orders() {
                   <td>{o._id.slice(-6)}</td>
                   <td>{o.title}</td>
 
-                  {/* ✅ from backend */}
+                  {/*  from backend */}
                   <td>{o.buyerIdUser?.username || o.buyerId}</td>
                   <td>{o.sellerIdUser?.username || o.sellerId}</td>
 

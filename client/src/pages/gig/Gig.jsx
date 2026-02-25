@@ -13,7 +13,7 @@ function Gig() {
   const navigate = useNavigate();
   const { currentUser } = useContext(AuthContext);
 
-  // Fetch gig data
+
   const { isLoading, error, data } = useQuery({
     queryKey: ["gig", id],
     queryFn: () => newRequest.get(`/gigs/single/${id}`).then(res => res.data),
@@ -21,7 +21,7 @@ function Gig() {
 
   const userId = data?.userId;
 
-  // Fetch seller/user data
+
   const {
     isLoading: isLoadingUser,
     error: errorUser,
@@ -32,7 +32,7 @@ function Gig() {
     enabled: !!userId,
   });
 
-  // ✅ Handle Contact Me button
+
 const handleContact = async () => {
   try {
     if (!data?.userId) return;
@@ -41,7 +41,7 @@ const handleContact = async () => {
       to: data.userId,
     });
 
-    // ✅ use conversation.id (seller_buyer)
+    
     navigate(`/messages/${res.data.id}`);
 
   } catch (err) {

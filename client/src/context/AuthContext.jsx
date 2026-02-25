@@ -14,15 +14,19 @@ const getStoredUser = () => {
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(getStoredUser);
 
-  // ✅ refresh user from backend when userId changes
   useEffect(() => {
     const fetchUser = async () => {
       try {
         if (!currentUser?._id) return;
 
         const res = await newRequest.get(`/users/${currentUser._id}`);
-        setCurrentUser(res.data);
-        localStorage.setItem("currentUser", JSON.stringify(res.data));
+
+        // ✅ merge instead of overwrite (prevents losing role/isSeller/etc.)
+        setCurrentUser((prev) => {
+          const merged = { ...(prev || {}), ...(res.data || {}) };
+          localStorage.setItem("currentUser", JSON.stringify(merged));
+          return merged;
+        });
       } catch (err) {
         console.log("Failed to fetch user", err);
         setCurrentUser(null);
@@ -31,7 +35,6 @@ export const AuthProvider = ({ children }) => {
     };
 
     fetchUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser?._id]);
 
   const login = (user) => {
@@ -49,7 +52,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("currentUser");
   };
 
-  // ✅ useMemo gives stable value reference (better for rerenders)
   const value = useMemo(() => ({ currentUser, login, logout }), [currentUser]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

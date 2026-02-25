@@ -9,7 +9,7 @@ export default function AdminLayout() {
 
   const [collapsed, setCollapsed] = useState(false);
 
-  // ✅ remember collapsed state
+  
   useEffect(() => {
     const saved = localStorage.getItem("adminSidebarCollapsed");
     if (saved === "1") setCollapsed(true);

@@ -4,17 +4,17 @@ import { QRCodeCanvas } from "qrcode.react";
 import "./Pay.scss";
 
 const Pay = () => {
-  const { id } = useParams(); // gigId
+  const { id } = useParams();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [txnId, setTxnId] = useState("");
 
-  // ✅ Your UPI (replace with your real one)
+ 
   const merchantUPI = "yourupi@oksbi";
 
-  // ✅ Example price (later fetch from gig API if needed)
+
   const amount = 100;
 
   const upiLink = `upi://pay?pa=${merchantUPI}&pn=Workhive&am=${amount}&cu=INR`;
@@ -23,7 +23,7 @@ const Pay = () => {
     setLoading(true);
 
     try {
-      // simulate delay after scanning
+    
       await new Promise((r) => setTimeout(r, 2500));
 
       const transaction = "TXN" + Date.now();
@@ -48,7 +48,7 @@ const Pay = () => {
         <div className="payBox">
           <h2>Scan & Pay</h2>
 
-          {/* ✅ QR code always visible */}
+         
           <div className="qrBox">
             <QRCodeCanvas
               value={upiLink}
@@ -61,7 +61,7 @@ const Pay = () => {
 
           <p style={{ marginTop: 10 }}>Scan with any UPI app</p>
 
-          {/* fallback manual button */}
+          
           <button onClick={handlePayment} disabled={loading}>
             {loading ? "Waiting for payment..." : "I have paid"}
           </button>

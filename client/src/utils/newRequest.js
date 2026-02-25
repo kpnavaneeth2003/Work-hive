@@ -7,7 +7,7 @@ const newRequest = axios.create({
 
 newRequest.interceptors.request.use((config) => {
   const user = JSON.parse(localStorage.getItem("currentUser") || "null");
-  const token = user?.token; // change to user?.accessToken if that's your field
+  const token = user?.token;
 
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;

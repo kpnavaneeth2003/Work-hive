@@ -31,12 +31,12 @@ function Featured() {
       return;
     }
 
-    // For gig suggestion: either search or go direct gig page
+    
     navigate(`/gigs?search=${encodeURIComponent(item.value)}`);
-    // OR: navigate(`/gig/${item.id}`);
+    
   };
 
-  // ✅ fetch suggestions with debounce
+  
   useEffect(() => {
     const q = input.trim();
     if (!q) {
@@ -61,7 +61,7 @@ function Featured() {
     return () => clearTimeout(timer);
   }, [input]);
 
-  // ✅ close dropdown when clicking outside
+  
   useEffect(() => {
     const onDown = (e) => {
       if (boxRef.current && !boxRef.current.contains(e.target)) {
@@ -80,7 +80,7 @@ function Featured() {
             Get <span>it</span> done
           </h1>
 
-          {/* 🔍 SEARCH + SUGGESTIONS */}
+          
           <div className="searchWrap" ref={boxRef}>
             <div className="search">
               <div className="searchInput">
@@ -115,7 +115,7 @@ function Featured() {
             )}
           </div>
 
-          {/* ⭐ POPULAR CATEGORIES */}
+
           <div className="popular">
             <span>Popular:</span>
 
