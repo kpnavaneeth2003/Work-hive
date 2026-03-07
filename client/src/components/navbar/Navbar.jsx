@@ -4,6 +4,18 @@ import newRequest from "../../utils/newRequest";
 import "./Navbar.scss";
 import { AuthContext } from "../../context/AuthContext";
 
+const CATEGORIES = [
+  "Plumbing",
+  "Electrician",
+  "Carpentry",
+  "Landscaping",
+  "Cleaning",
+  "Bathroom renovators",
+  "Air conditioning services",
+  "Gardening",
+  "Arborist",
+];
+
 function Navbar() {
   const [active, setActive] = useState(false);
   const [open, setOpen] = useState(false);
@@ -12,29 +24,20 @@ function Navbar() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  const { currentUser, logout } = useContext(AuthContext); 
-
-  const CATEGORIES = [
-    "Plumbing",
-    "Electrician",
-    "Carpentry",
-    "Landscaping",
-    "Cleaning",
-    "Bathroom renovators",
-    "Builders",
-    "Air conditioning services",
-    "Arborist",
-  ];
+  const { currentUser, logout } = useContext(AuthContext);
 
   const userMenuRef = useRef(null);
 
   useEffect(() => {
-    const isActive = () => setActive(window.scrollY > 0);
-    window.addEventListener("scroll", isActive);
-    return () => window.removeEventListener("scroll", isActive);
+    const handleScroll = () => {
+      setActive(window.scrollY > 0);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
@@ -46,85 +49,53 @@ function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  
   useEffect(() => {
     const fetchUnread = async () => {
       try {
-        if (!currentUser?._id) return;
+        if (!currentUser?._id) {
+          setUnreadCount(0);
+          return;
+        }
+
         const res = await newRequest.get("/messages/unread/count");
         setUnreadCount(res.data?.count || 0);
-      } catch (err) {}
+      } catch (err) {
+        setUnreadCount(0);
+      }
     };
 
     fetchUnread();
+
+    if (!currentUser?._id) return;
+
     const interval = setInterval(fetchUnread, 5000);
     return () => clearInterval(interval);
   }, [currentUser?._id]);
 
   const handleLogout = async () => {
-    setOpen(false);
-    await logout(); 
-    navigate("/");
+    try {
+      setOpen(false);
+      await logout();
+      navigate("/");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
+  const isActiveNavbar = active || pathname !== "/";
+
   return (
-    <div className={active || pathname !== "/" ? "navbar active" : "navbar"}>
+    <div className={isActiveNavbar ? "navbar active" : "navbar"}>
       <div className="container">
-        <div className="logo">
-          <Link className="link" to="/">
-            <span className="text">Workhive</span>
-          </Link>
+        <Link className="link logo" to="/">
+          <span className="text">Workhive</span>
           <span className="dot">.</span>
-        </div>
+        </Link>
 
         <div className="links">
-          {currentUser ? (
-            <div
-              className="user"
-              ref={userMenuRef}
-              onClick={() => setOpen((prev) => !prev)}
-            >
-              <img src={currentUser.img || "/img/noavatar.jpg"} alt="" />
-              <span>{currentUser.username}</span>
-
-              {open && (
-                <div className="options" onClick={(e) => e.stopPropagation()}>
-                  {currentUser.isSeller && (
-                    <>
-                      <Link className="link" to="/mygigs" onClick={() => setOpen(false)}>
-                        Gigs
-                      </Link>
-                      <Link className="link" to="/add" onClick={() => setOpen(false)}>
-                        Add New Gig
-                      </Link>
-                    </>
-                  )}
-
-                  <Link className="link" to="/orders" onClick={() => setOpen(false)}>
-                    Services
-                  </Link>
-
-                  <Link
-                    className="link msgLink"
-                    to="/messages"
-                    onClick={() => setOpen(false)}
-                  >
-                    <span>Messages</span>
-                    {unreadCount > 0 && <span className="msgBadge">{unreadCount}</span>}
-                  </Link>
-
-                  <span
-                    className="link"
-                    onClick={handleLogout}
-                    style={{ cursor: "pointer" }}
-                  >
-                    Logout
-                  </span>
-                </div>
-              )}
-            </div>
-          ) : (
+          {!currentUser && (
             <>
+              <span onClick={() => navigate("/gigs")}>Explore Services</span>
               <Link to="/login" className="link">
                 Sign in
               </Link>
@@ -133,10 +104,90 @@ function Navbar() {
               </Link>
             </>
           )}
+
+          {currentUser && (
+            <>
+              {!currentUser.isSeller && (
+                <span onClick={() => navigate("/register?seller=true")}>
+                  Become a Seller
+                </span>
+              )}
+
+              <div
+                className="user"
+                ref={userMenuRef}
+                onClick={() => setOpen((prev) => !prev)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setOpen((prev) => !prev);
+                  }
+                }}
+              >
+                <img src={currentUser.img || "/img/noavatar.jpg"} alt="User" />
+                <span>{currentUser.username}</span>
+
+                {open && (
+                  <div className="options" onClick={(e) => e.stopPropagation()}>
+                    {currentUser.isSeller && (
+                      <>
+                        <Link
+                          className="link"
+                          to="/mygigs"
+                          onClick={() => setOpen(false)}
+                        >
+                          My Gigs
+                        </Link>
+
+                        <Link
+                          className="link"
+                          to="/add"
+                          onClick={() => setOpen(false)}
+                        >
+                          Add New Gig
+                        </Link>
+                      </>
+                    )}
+
+                    <Link
+                      className="link"
+                      to="/orders"
+                      onClick={() => setOpen(false)}
+                    >
+                      Services
+                    </Link>
+
+                    <Link
+                      className="link msgLink"
+                      to="/messages"
+                      onClick={() => setOpen(false)}
+                    >
+                      <span>Messages</span>
+                      {unreadCount > 0 && (
+                        <span className="msgBadge">
+                          {unreadCount > 99 ? "99+" : unreadCount}
+                        </span>
+                      )}
+                    </Link>
+
+                    <span
+                      className="link"
+                      onClick={handleLogout}
+                      style={{ cursor: "pointer" }}
+                    >
+                      Logout
+                    </span>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>
 
-      {(active || pathname !== "/") && (
+      {isActiveNavbar && (
         <>
           <hr />
           <div className="menu">
@@ -150,7 +201,6 @@ function Navbar() {
               </Link>
             ))}
           </div>
-          <hr />
         </>
       )}
     </div>

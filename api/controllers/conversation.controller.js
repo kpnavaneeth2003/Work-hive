@@ -1,7 +1,6 @@
 import Conversation from "../models/conversation.model.js";
 import User from "../models/user.model.js";
-import Message from "../models/message.model.js"; 
-
+import Message from "../models/message.model.js";
 
 export const createConversation = async (req, res, next) => {
   try {
@@ -41,25 +40,18 @@ export const createConversation = async (req, res, next) => {
   }
 };
 
-
 export const getConversations = async (req, res, next) => {
   try {
     const convos = await Conversation.find(
-      req.isSeller
-        ? { sellerId: req.userId }
-        : { buyerId: req.userId }
+      req.isSeller ? { sellerId: req.userId } : { buyerId: req.userId }
     ).sort({ updatedAt: -1 });
 
-    
     const conversationsWithUser = await Promise.all(
       convos.map(async (c) => {
         const otherUserId = req.isSeller ? c.buyerId : c.sellerId;
 
-        const user = await User.findById(otherUserId).select(
-          "username img"
-        );
+        const user = await User.findById(otherUserId).select("username img");
 
-        
         const lastMessageObj = await Message.findOne({
           conversationId: c.id,
         })
@@ -68,9 +60,9 @@ export const getConversations = async (req, res, next) => {
 
         return {
           ...c._doc,
-          user, 
-          lastMessageObj, 
-          lastMessage: lastMessageObj?.desc || "", 
+          user,
+          lastMessageObj,
+          lastMessage: lastMessageObj?.desc || "",
         };
       })
     );
@@ -81,25 +73,38 @@ export const getConversations = async (req, res, next) => {
   }
 };
 
-
 export const getSingleConversation = async (req, res, next) => {
   try {
     const convo = await Conversation.findOne({ id: req.params.id });
+
+    if (!convo) {
+      return res.status(404).json({ message: "Conversation not found" });
+    }
+
+    const isParticipant =
+      convo.sellerId === req.userId || convo.buyerId === req.userId;
+
+    if (!isParticipant) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
     res.status(200).json(convo);
   } catch (err) {
     next(err);
   }
 };
 
-
 export const markAsRead = async (req, res, next) => {
   try {
-    await Conversation.findOneAndUpdate(
+    const updated = await Conversation.findOneAndUpdate(
       { id: req.params.id },
-      req.isSeller
-        ? { readBySeller: true }
-        : { readByBuyer: true }
+      req.isSeller ? { readBySeller: true } : { readByBuyer: true },
+      { new: true }
     );
+
+    if (!updated) {
+      return res.status(404).send("Conversation not found");
+    }
 
     res.status(200).send("Conversation marked as read");
   } catch (err) {

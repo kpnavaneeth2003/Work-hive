@@ -12,24 +12,64 @@ const CATEGORIES = [
   "Carpentry",
   "Landscaping",
   "Cleaning",
+  "Gardening",
   "Bathroom renovators",
-  "Air conditioning services",
+  "Air Conditioning services",
   "Painting",
   "Arborist",
 ];
 
 const Add = () => {
   const [singleFile, setSingleFile] = useState(null);
-  const [files, setFiles] = useState([]); // FileList
+  const [files, setFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [detectingLocation, setDetectingLocation] = useState(false);
 
-  const [state, dispatch] = useReducer(gigReducer, INITIAL_STATE);
+  const [state, dispatch] = useReducer(gigReducer, {
+    ...INITIAL_STATE,
+    city: "",
+    area: "",
+    address: "",
+    lat: "",
+    lng: "",
+  });
 
   const handleChange = (e) => {
     dispatch({
       type: "CHANGE_INPUT",
       payload: { name: e.target.name, value: e.target.value },
     });
+  };
+
+  const handleDetectLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported in your browser.");
+      return;
+    }
+
+    setDetectingLocation(true);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        dispatch({
+          type: "CHANGE_INPUT",
+          payload: { name: "lat", value: position.coords.latitude },
+        });
+
+        dispatch({
+          type: "CHANGE_INPUT",
+          payload: { name: "lng", value: position.coords.longitude },
+        });
+
+        setDetectingLocation(false);
+        alert("Current location detected successfully.");
+      },
+      (error) => {
+        console.error(error);
+        setDetectingLocation(false);
+        alert("Unable to detect current location.");
+      }
+    );
   };
 
   const handleUpload = async () => {
@@ -73,8 +113,16 @@ const Add = () => {
 
     if (uploading) return alert("Please wait for upload to finish.");
     if (!state.cover) return alert("Please upload a cover image first.");
+    if (!state.city?.trim()) return alert("Please enter a city.");
+    if (!state.area?.trim()) return alert("Please enter an area.");
 
-    mutation.mutate(state);
+    mutation.mutate({
+      ...state,
+      price: Number(state.price),
+      hours: Number(state.hours),
+      lat: state.lat !== "" ? Number(state.lat) : undefined,
+      lng: state.lng !== "" ? Number(state.lng) : undefined,
+    });
   };
 
   return (
@@ -96,6 +144,59 @@ const Add = () => {
                 </option>
               ))}
             </select>
+
+            <label>City</label>
+            <input
+              name="city"
+              placeholder="e.g. Thrissur"
+              value={state.city || ""}
+              onChange={handleChange}
+              required
+            />
+
+            <label>Area / Locality</label>
+            <input
+              name="area"
+              placeholder="e.g. Anthikad"
+              value={state.area || ""}
+              onChange={handleChange}
+              required
+            />
+
+            <label>Address</label>
+            <input
+              name="address"
+              placeholder="e.g. Anthikad, Thrissur"
+              value={state.address || ""}
+              onChange={handleChange}
+            />
+
+            <label>Current Coordinates</label>
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginBottom: "10px" }}>
+              <input
+                name="lat"
+                type="number"
+                step="any"
+                placeholder="Latitude"
+                value={state.lat || ""}
+                onChange={handleChange}
+              />
+              <input
+                name="lng"
+                type="number"
+                step="any"
+                placeholder="Longitude"
+                value={state.lng || ""}
+                onChange={handleChange}
+              />
+              <button
+                type="button"
+                onClick={handleDetectLocation}
+                disabled={detectingLocation}
+              >
+                {detectingLocation ? "Detecting..." : "Use Current Location"}
+              </button>
+            </div>
 
             <label>Cover Image</label>
             <input

@@ -30,13 +30,11 @@ function Gig() {
     enabled: !!userId,
   });
 
-  
   const hasRating = data?.starNumber > 0;
   const avgRating = hasRating
     ? Math.round(data.totalStars / data.starNumber)
     : null;
 
- 
   const memberSince = (() => {
     const raw = dataUser?.createdAt;
     if (!raw) return "—";
@@ -48,7 +46,6 @@ function Gig() {
     });
   })();
 
- 
   const handleContact = async () => {
     try {
       if (!data?.userId || currentUser?.id === data.userId) return;
@@ -71,12 +68,10 @@ function Gig() {
         "Something went wrong!"
       ) : (
         <div className="container">
-          
           <div className="left">
             <span className="breadcrumbs">Workhive &gt; {data.cat} &gt;</span>
             <h1>{data.title}</h1>
 
-            
             {isLoadingUser ? (
               "Loading..."
             ) : errorUser ? (
@@ -85,12 +80,12 @@ function Gig() {
               <div className="user">
                 <img
                   className="pp"
-                  src={dataUser.img || "/img/noavatar.jpg"}
+                  src={dataUser?.img || "/img/noavatar.jpg"}
                   alt=""
                 />
-                <span>{dataUser.username}</span>
+                <span>{dataUser?.username}</span>
 
-                {avgRating && (
+                {hasRating && (
                   <div className="stars">
                     {Array(avgRating)
                       .fill()
@@ -103,12 +98,9 @@ function Gig() {
               </div>
             )}
 
-            
             {(data.images?.length > 0 || data.cover) && (
               <Slider>
-                {data.cover && (
-                  <img src={data.cover || "/img/noimage.jpg"} alt="" />
-                )}
+                {data.cover && <img src={data.cover} alt="" />}
                 {data.images?.map((img) => (
                   <img key={img} src={img} alt="" />
                 ))}
@@ -118,16 +110,39 @@ function Gig() {
             <h2>About This Gig</h2>
             <p>{data.desc}</p>
 
-           
+            {(data.city || data.area || data.address) && (
+              <div style={{ marginTop: "20px" }}>
+                <h2>Location</h2>
+
+                {data.city && (
+                  <p>
+                    <strong>City:</strong> {data.city}
+                  </p>
+                )}
+
+                {data.area && (
+                  <p>
+                    <strong>Area:</strong> {data.area}
+                  </p>
+                )}
+
+                {data.address && (
+                  <p>
+                    <strong>Address:</strong> {data.address}
+                  </p>
+                )}
+              </div>
+            )}
+
             {isLoadingUser || errorUser ? null : (
               <div className="seller">
                 <h2>About The Seller</h2>
                 <div className="user">
-                  <img src={dataUser.img || "/img/noavatar.jpg"} alt="" />
+                  <img src={dataUser?.img || "/img/noavatar.jpg"} alt="" />
                   <div className="info">
-                    <span>{dataUser.username}</span>
+                    <span>{dataUser?.username}</span>
 
-                    {avgRating && (
+                    {hasRating && (
                       <div className="stars">
                         {Array(avgRating)
                           .fill()
@@ -148,7 +163,7 @@ function Gig() {
                   <div className="items">
                     <div className="item">
                       <span className="title">From</span>
-                      <span className="desc">{dataUser.country}</span>
+                      <span className="desc">{dataUser?.country || "—"}</span>
                     </div>
 
                     <div className="item">
@@ -167,7 +182,7 @@ function Gig() {
                     </div>
                   </div>
                   <hr />
-                  <p>{dataUser.desc}</p>
+                  <p>{dataUser?.desc}</p>
                 </div>
               </div>
             )}
@@ -175,7 +190,6 @@ function Gig() {
             <Reviews gigId={id} />
           </div>
 
-          
           <div className="right">
             <div className="price">
               <h3>{data.shortTitle}</h3>
@@ -187,7 +201,7 @@ function Gig() {
             <div className="details">
               <div className="item">
                 <img src="/img/clock.png" alt="" />
-                <span>Arrive in {data.hours} Hours </span>
+                <span>Arrive in {data.hours} Hours</span>
               </div>
             </div>
 

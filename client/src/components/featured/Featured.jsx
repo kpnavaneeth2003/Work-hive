@@ -3,6 +3,13 @@ import "./Featured.scss";
 import { useNavigate } from "react-router-dom";
 import newRequest from "../../utils/newRequest";
 
+const POPULAR_CATEGORIES = [
+  "Plumbing",
+  "Electrician",
+  "Cleaning",
+  "Carpentry",
+];
+
 function Featured() {
   const [input, setInput] = useState("");
   const [suggestions, setSuggestions] = useState([]);
@@ -14,6 +21,7 @@ function Featured() {
   const handleSubmit = () => {
     const q = input.trim();
     if (!q) return;
+
     setOpenSug(false);
     navigate(`/gigs?search=${encodeURIComponent(q)}`);
   };
@@ -31,14 +39,30 @@ function Featured() {
       return;
     }
 
-    
+    if (item.type === "city") {
+      navigate(`/gigs?city=${encodeURIComponent(item.value)}`);
+      return;
+    }
+
+    if (item.type === "area") {
+      navigate(`/gigs?area=${encodeURIComponent(item.value)}`);
+      return;
+    }
+
     navigate(`/gigs?search=${encodeURIComponent(item.value)}`);
-    
   };
 
-  
+  const getSuggestionLabel = (type) => {
+    if (type === "cat") return "Category";
+    if (type === "gig") return "Service";
+    if (type === "city") return "City";
+    if (type === "area") return "Area";
+    return "Result";
+  };
+
   useEffect(() => {
     const q = input.trim();
+
     if (!q) {
       setSuggestions([]);
       setOpenSug(false);
@@ -50,8 +74,9 @@ function Featured() {
         const res = await newRequest.get(
           `/search/suggestions?q=${encodeURIComponent(q)}`
         );
+
         setSuggestions(res.data || []);
-        setOpenSug(true);
+        setOpenSug((res.data || []).length > 0);
       } catch (err) {
         setSuggestions([]);
         setOpenSug(false);
@@ -61,13 +86,13 @@ function Featured() {
     return () => clearTimeout(timer);
   }, [input]);
 
-  
   useEffect(() => {
     const onDown = (e) => {
       if (boxRef.current && !boxRef.current.contains(e.target)) {
         setOpenSug(false);
       }
     };
+
     document.addEventListener("mousedown", onDown);
     return () => document.removeEventListener("mousedown", onDown);
   }, []);
@@ -77,23 +102,30 @@ function Featured() {
       <div className="container">
         <div className="left">
           <h1>
-            Get <span>it</span> done
+            Find trusted local experts and get <span>it</span> done
           </h1>
 
-          
+          <p>
+            Book reliable professionals for plumbing, electrical work, cleaning,
+            carpentry, painting, and more — all in one place.
+          </p>
+
           <div className="searchWrap" ref={boxRef}>
             <div className="search">
               <div className="searchInput">
-                <img src="/img/search.png" alt="" />
+                <img src="/img/search.png" alt="Search" />
                 <input
                   type="text"
-                  placeholder="Find your service"
+                  placeholder="Search for a service, category, city, or area"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  onFocus={() => suggestions.length && setOpenSug(true)}
-                  onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+                  onFocus={() => suggestions.length > 0 && setOpenSug(true)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleSubmit();
+                  }}
                 />
               </div>
+
               <button onClick={handleSubmit}>Search</button>
             </div>
 
@@ -101,13 +133,13 @@ function Featured() {
               <div className="suggestions">
                 {suggestions.map((s, idx) => (
                   <div
-                    key={idx}
+                    key={`${s.type}-${s.value}-${idx}`}
                     className="suggestionItem"
                     onClick={() => pickSuggestion(s)}
                   >
                     <span className="suggestionText">{s.value}</span>
                     <span className="suggestionType">
-                      {s.type === "cat" ? "Category" : "Service"}
+                      {getSuggestionLabel(s.type)}
                     </span>
                   </div>
                 ))}
@@ -115,18 +147,18 @@ function Featured() {
             )}
           </div>
 
-
           <div className="popular">
-            <span>Popular:</span>
+            <span>Popular services:</span>
 
-            <button onClick={() => goToCategory("AC Repair")}>AC Repair</button>
-            <button onClick={() => goToCategory("Plumbing")}>Plumbing</button>
-            <button onClick={() => goToCategory("Electrician")}>Electrician</button>
-            <button onClick={() => goToCategory("Carpentry")}>Carpentry</button>
+            {POPULAR_CATEGORIES.map((cat) => (
+              <button key={cat} onClick={() => goToCategory(cat)}>
+                {cat}
+              </button>
+            ))}
           </div>
         </div>
 
-        <div className="right"></div>
+        
       </div>
     </div>
   );

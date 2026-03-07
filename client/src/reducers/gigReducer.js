@@ -9,9 +9,14 @@ export const INITIAL_STATE = {
   hours: 0,
   features: [],
   price: 0,
+  city: "",
+  area: "",
+  address: "",
+  lat: "",
+  lng: "",
 };
 
-const numberFields = new Set(["price", "hours"]);
+const numberFields = new Set(["price", "hours", "lat", "lng"]);
 
 export const gigReducer = (state, action) => {
   switch (action.type) {
@@ -19,7 +24,8 @@ export const gigReducer = (state, action) => {
       const { name, value } = action.payload;
       return {
         ...state,
-        [name]: numberFields.has(name) ? Number(value) : value,
+        [name]:
+          numberFields.has(name) && value !== "" ? Number(value) : value,
       };
     }
 

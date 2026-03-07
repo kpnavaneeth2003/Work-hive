@@ -25,7 +25,7 @@ export const cards = [
   },
   {
     id: 5,
-    title: "Air conditioning services",
+    title: "Air Conditioning services",
     desc: "Cool comfort restored",
     img: "https://cdn.pixabay.com/photo/2021/12/04/12/10/air-conditioner-6845138_960_720.jpg",
   },
@@ -43,7 +43,7 @@ export const cards = [
   },
   {
     id: 8,
-    title: "Airborist",
+    title: "Arborist",
     desc: "Regular tree care",
     img: "https://images.pexels.com/photos/1247499/pexels-photo-1247499.jpeg",
   },
@@ -63,5 +63,4 @@ export const projects = [
 
   
 ];
-
 

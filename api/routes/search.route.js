@@ -9,10 +9,11 @@ const CATEGORIES = [
   "Carpentry",
   "Landscaping",
   "Cleaning",
-  "Air Conditioning services",
+  "Gardening",
+  "Bathroom renovators",
+  "Air conditioning services",
   "Painting",
   "Arborist",
-  "Bathroom renovators",
 ];
 
 router.get("/suggestions", async (req, res) => {
@@ -22,12 +23,12 @@ router.get("/suggestions", async (req, res) => {
 
     const qLower = q.toLowerCase();
 
-    
-    const catMatches = CATEGORIES.filter((c) => c.toLowerCase().includes(qLower))
+    const catMatches = CATEGORIES.filter((c) =>
+      c.toLowerCase().includes(qLower)
+    )
       .slice(0, 5)
       .map((c) => ({ type: "cat", value: c }));
 
-    
     const gigMatches = await Gig.find({
       title: { $regex: q, $options: "i" },
     })
@@ -40,7 +41,25 @@ router.get("/suggestions", async (req, res) => {
       id: g._id,
     }));
 
-    res.json([...catMatches, ...gigList]);
+    const cityMatchesRaw = await Gig.distinct("city", {
+      city: { $regex: q, $options: "i" },
+    });
+
+    const cityMatches = cityMatchesRaw.slice(0, 5).map((city) => ({
+      type: "city",
+      value: city,
+    }));
+
+    const areaMatchesRaw = await Gig.distinct("area", {
+      area: { $regex: q, $options: "i" },
+    });
+
+    const areaMatches = areaMatchesRaw.slice(0, 5).map((area) => ({
+      type: "area",
+      value: area,
+    }));
+
+    res.json([...catMatches, ...cityMatches, ...areaMatches, ...gigList]);
   } catch (err) {
     res.status(500).json({ message: "Suggestion error" });
   }

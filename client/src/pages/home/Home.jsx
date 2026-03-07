@@ -12,79 +12,90 @@ function Home() {
     <div className="home">
       <Featured />
       <TrustedBy />
+
       <Slide slidesToShow={5} arrowsScroll={5}>
         {cards.map((card) => (
           <CatCard key={card.id} card={card} />
         ))}
       </Slide>
+
       <div className="features">
         <div className="container">
           <div className="item">
-            <h1>A whole world of freelance talent at your fingertips</h1>
+            <h1>Why customers choose Workhive for home services</h1>
+
             <div className="title">
-              <img src="./img/check.png" alt="" />
-              The best for every budget
+              <img src="/img/check.png" alt="Check" />
+              Trusted professionals for every budget
             </div>
             <p>
-              Find high-quality services at every price point. No hourly rates,
-              just service-based pricing.
+              Compare services across different price points and choose the
+              right expert for your needs without the confusion of hourly
+              pricing.
             </p>
+
             <div className="title">
-              <img src="./img/check.png" alt="" />
-              Quality work done quickly
+              <img src="/img/check.png" alt="Check" />
+              Fast, convenient booking
             </div>
             <p>
-              Find the best to begin working on your property within
-              minutes.
+              Find the right service provider quickly and get work started
+              without long back-and-forth communication.
             </p>
+
             <div className="title">
-              <img src="./img/check.png" alt="" />
-              24/7 support
+              <img src="/img/check.png" alt="Check" />
+              Reliable support whenever you need it
             </div>
             <p>
-              Find high-quality services at every price point. No hourly rates,
-              just service-based pricing.
+              From booking questions to service issues, get help throughout
+              your experience on the platform.
             </p>
           </div>
+
           <div className="item">
-            <video src="./img/video.mp4" controls />
+            <video src="/img/video.mp4" controls />
           </div>
         </div>
       </div>
+
       <div className="features dark">
         <div className="container">
           <div className="item">
             <h1>
-               <i>Businesses</i>
+              <i>For businesses</i>
             </h1>
-            <h1>
-              A solution for business owners
-            </h1>
-            
+            <h1>A smarter way to manage service requests</h1>
+
+            <p>
+              Workhive helps business owners connect with customers, manage
+              service demand, and grow with a more organized workflow.
+            </p>
+
             <div className="title">
-              <img src="./img/check.png" alt="" />
-              Connect businesses with customers
+              <img src="/img/check.png" alt="Check" />
+              Connect your business with more local customers
             </div>
 
             <div className="title">
-              <img src="./img/check.png" alt="" />
-              Get matched with the perfect users
+              <img src="/img/check.png" alt="Check" />
+              Get matched with the right service requests
             </div>
 
             <div className="title">
-              <img src="./img/check.png" alt="" />
-              Manage teamwork and boost productivity with one powerful workspace
+              <img src="/img/check.png" alt="Check" />
+              Improve coordination and productivity in one place
             </div>
+
             <button>Explore Businesses</button>
           </div>
-          <div className="item">
-            <img
-              src="https://fiverr-res.cloudinary.com/q_auto,f_auto,w_870,dpr_2.0/v1/attachments/generic_asset/asset/d9c17ceebda44764b591a8074a898e63-1599597624768/business-desktop-870-x2.png"
-              alt=""
-            />
-          </div>
+
+          
         </div>
       </div>
+
+      
+
       <Slide slidesToShow={4} arrowsScroll={4}>
         {projects.map((card) => (
           <ProjectCard key={card.id} card={card} />

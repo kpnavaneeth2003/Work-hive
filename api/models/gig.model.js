@@ -31,8 +31,9 @@ const GigSchema = new Schema(
         "Carpentry",
         "Landscaping",
         "Cleaning",
+        "Gardening",
         "Bathroom renovators",
-        "Air conditioning services",
+        "Air Conditioning services",
         "Painting",
         "Arborist",
       ],
@@ -60,13 +61,10 @@ const GigSchema = new Schema(
       type: Number,
       required: true,
     },
-
-    
     revisionNumber: {
       type: Number,
       default: 0,
     },
-
     features: {
       type: [String],
     },
@@ -74,8 +72,41 @@ const GigSchema = new Schema(
       type: Number,
       default: 0,
     },
+
+    // Location fields
+    city: {
+      type: String,
+      required: true,
+      trim: true,
+      index: true,
+    },
+    area: {
+      type: String,
+      required: true,
+      trim: true,
+      index: true,
+    },
+    address: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    location: {
+      type: {
+        type: String,
+        enum: ["Point"],
+        default: "Point",
+      },
+      coordinates: {
+        type: [Number], // [lng, lat]
+        required: true,
+        default: [0, 0],
+      },
+    },
   },
   { timestamps: true }
 );
+
+GigSchema.index({ location: "2dsphere" });
 
 export default mongoose.model("Gig", GigSchema);

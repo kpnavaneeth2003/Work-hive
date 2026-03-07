@@ -18,6 +18,7 @@ import reviewRoute from "./routes/review.route.js";
 import notificationRoute from "./routes/notification.route.js";
 import categoryRoute from "./routes/category.route.js";
 import searchRoute from "./routes/search.route.js";
+import locationRoute from "./routes/location.route.js";
 
 const app = express();
 mongoose.set("strictQuery", true);
@@ -39,6 +40,7 @@ app.use("/api/reviews", reviewRoute);
 app.use("/api/notifications", notificationRoute);
 app.use("/api/categories", categoryRoute);
 app.use("/api/search", searchRoute);
+app.use("/api/location", locationRoute);
 
 
 app.use((err, req, res, next) => {

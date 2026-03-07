@@ -1,27 +1,36 @@
 .gig {
   display: flex;
   justify-content: center;
+  background: #f8fafc;
+  min-height: 100vh;
 
   .container {
-    width: 1400px;
-    padding: 30px 0px;
+    width: 100%;
+    max-width: 1400px;
+    padding: 32px 20px 56px;
     display: flex;
-    gap: 50px;
+    gap: 32px;
+    align-items: flex-start;
 
     .left {
       flex: 2;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 22px;
 
       .breadcrumbs {
-        font-weight: 300;
+        font-weight: 500;
         text-transform: uppercase;
-        font-size: 13px;
-        color: #555;
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        color: #9ca3af;
       }
 
       h1 {
+        font-size: 34px;
+        line-height: 1.2;
+        color: #111827;
+        margin: 0;
       }
 
       .user {
@@ -30,15 +39,17 @@
         gap: 10px;
 
         .pp {
-          width: 32px;
-          height: 32px;
+          width: 36px;
+          height: 36px;
           border-radius: 50%;
           object-fit: cover;
+          border: 1px solid #e5e7eb;
         }
 
         span {
           font-size: 14px;
-          font-weight: 500;
+          font-weight: 600;
+          color: #374151;
         }
 
         .stars {
@@ -53,32 +64,43 @@
 
           span {
             font-size: 14px;
-            font-weight: bold;
-            color: #ffc108;
+            font-weight: 700;
+            color: #f59e0b;
           }
         }
       }
 
       .slider {
-        background-color: #F5F5F5;
+        background-color: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+
         img {
           max-height: 500px;
+          width: 100%;
           object-fit: contain;
+          background: #f9fafb;
         }
       }
 
       h2 {
-        font-weight: 400;
+        font-weight: 700;
+        color: #111827;
+        font-size: 22px;
+        margin: 0;
       }
 
       p {
-        font-weight: 300;
-        line-height: 25px;
-        color: #555;
+        font-weight: 400;
+        line-height: 1.8;
+        color: #4b5563;
+        margin: 0;
       }
 
       .seller {
-        margin-top: 50px;
+        margin-top: 26px;
         display: flex;
         flex-direction: column;
         gap: 20px;
@@ -86,19 +108,26 @@
         .user {
           display: flex;
           align-items: center;
-          gap: 20px;
+          gap: 18px;
 
           img {
-            width: 100px;
-            height: 100px;
+            width: 88px;
+            height: 88px;
             border-radius: 50%;
             object-fit: cover;
+            border: 1px solid #e5e7eb;
           }
 
           .info {
             display: flex;
             flex-direction: column;
             gap: 10px;
+
+            span {
+              font-size: 18px;
+              font-weight: 700;
+              color: #111827;
+            }
 
             .stars {
               display: flex;
@@ -112,85 +141,113 @@
 
               span {
                 font-size: 14px;
-                font-weight: bold;
-                color: #ffc108;
+                font-weight: 700;
+                color: #f59e0b;
               }
             }
 
             button {
               background-color: white;
-              border-radius: 5px;
-              border: 1px solid gray;
-              padding: 10px;
+              border-radius: 12px;
+              border: 1px solid #d1d5db;
+              padding: 11px 16px;
+              color: #111827;
+              font-weight: 600;
+              cursor: pointer;
+              transition: 0.2s ease;
+
+              &:hover {
+                background: #f3f4f6;
+              }
             }
           }
         }
 
         .box {
-          border: 1px solid lightgray;
-          border-radius: 5px;
-          padding: 20px;
-          margin-top: 20px;
+          border: 1px solid #e5e7eb;
+          border-radius: 18px;
+          padding: 24px;
+          margin-top: 6px;
+          background: #ffffff;
+          box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
 
           .items {
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
+            gap: 10px 20px;
 
             .item {
-              width: 300px;
+              width: calc(50% - 10px);
               display: flex;
               flex-direction: column;
-              gap: 10px;
-              margin-bottom: 20px;
+              gap: 8px;
+              margin-bottom: 16px;
 
               .title {
-                font-weight: 300;
+                font-weight: 500;
+                color: #9ca3af;
+                font-size: 13px;
+              }
+
+              .desc {
+                font-weight: 600;
+                color: #111827;
               }
             }
           }
 
           hr {
             height: 0;
-            border: 0.5px solid lightgray;
-            margin-bottom: 20px;
+            border: 0;
+            border-top: 1px solid #eef2f7;
+            margin: 6px 0 20px;
           }
         }
       }
-
-      
     }
 
     .right {
       flex: 1;
-      border: 1px solid lightgray;
-      padding: 20px;
-      border-radius: 5px;
+      border: 1px solid #e5e7eb;
+      padding: 24px;
+      border-radius: 20px;
       display: flex;
       flex-direction: column;
       gap: 20px;
       height: max-content;
-      max-height: 500px;
+      max-height: unset;
       position: sticky;
-      top: 150px;
+      top: 110px;
+      background: #ffffff;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
 
       .price {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: space-between;
+        gap: 14px;
 
-        h2{
-          font-weight: 300;
+        h2 {
+          font-weight: 700;
+          color: #111827;
+          margin: 0;
+          font-size: 28px;
         }
 
-        h3{
-          font-weight: 500;
+        h3 {
+          font-weight: 700;
+          color: #111827;
+          margin: 0;
+          font-size: 18px;
+          line-height: 1.4;
         }
       }
 
-      p{
-        color: gray;
-        margin: 10px 0px;
+      p {
+        color: #6b7280;
+        margin: 0;
+        line-height: 1.7;
       }
 
       .details {
@@ -198,41 +255,86 @@
         align-items: center;
         justify-content: space-between;
         font-size: 14px;
+        padding: 14px 0;
+        border-top: 1px solid #eef2f7;
+        border-bottom: 1px solid #eef2f7;
 
         .item {
           display: flex;
           align-items: center;
           gap: 10px;
+          color: #374151;
+          font-weight: 500;
 
           img {
-            width: 20px;
+            width: 18px;
           }
         }
       }
 
-      .features{
-        .item{
+      .features {
+        .item {
           display: flex;
           align-items: center;
           gap: 10px;
-          font-weight: 300;
-          color: gray;
-          margin-bottom: 5px;
+          font-weight: 500;
+          color: #4b5563;
+          margin-bottom: 10px;
 
-          img{
+          img {
             width: 14px;
           }
         }
       }
 
-      button{
-        background-color: #1dbf73;
-        padding: 10px;
+      button {
+        background-color: #111827;
+        padding: 14px 16px;
         color: white;
-        font-weight: 500;
+        font-weight: 700;
         border: none;
-        font-size: 18px;
+        font-size: 16px;
+        border-radius: 14px;
         cursor: pointer;
+        transition: 0.2s ease;
+
+        &:hover {
+          background: #000000;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 992px) {
+  .gig {
+    .container {
+      flex-direction: column;
+      padding: 24px 16px 40px;
+
+      .left,
+      .right {
+        width: 100%;
+      }
+
+      .right {
+        position: static;
+      }
+
+      .left {
+        h1 {
+          font-size: 28px;
+        }
+
+        .seller {
+          .box {
+            .items {
+              .item {
+                width: 100%;
+              }
+            }
+          }
+        }
       }
     }
   }
