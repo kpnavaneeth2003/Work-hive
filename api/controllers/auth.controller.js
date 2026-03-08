@@ -4,14 +4,20 @@ import jwt from "jsonwebtoken";
 
 export const register = async (req, res) => {
   try {
-    const newUser = new User(req.body);
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = bcrypt.hashSync(req.body.password, salt);
+
+    const newUser = new User({
+      ...req.body,
+      password: hashedPassword,
+    });
+
     await newUser.save();
 
     res.status(201).json({ message: "User created successfully" });
   } catch (err) {
-    // Duplicate key error
     if (err.code === 11000) {
-      const field = Object.keys(err.keyPattern)[0];
+      const field = Object.keys(err.keyPattern || {})[0];
 
       if (field === "username") {
         return res.status(400).json({ message: "Username already exists" });
@@ -27,6 +33,7 @@ export const register = async (req, res) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 };
+
 export const login = async (req, res) => {
   try {
     const user = await User.findOne({ username: req.body.username });
@@ -35,19 +42,17 @@ export const login = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-
     if (user.isBanned) {
       return res
         .status(403)
         .json({ message: "Your account is banned. Contact admin." });
     }
 
-    
     const isCorrect = bcrypt.compareSync(req.body.password, user.password);
+
     if (!isCorrect) {
       return res.status(400).json({ message: "Wrong password" });
     }
-
 
     const token = jwt.sign(
       { id: user._id, isSeller: user.isSeller, role: user.role },
@@ -61,8 +66,8 @@ export const login = async (req, res) => {
       .cookie("access_token", token, {
         httpOnly: true,
         sameSite: "lax",
-        secure: false, 
-        path: "/",     
+        secure: false,
+        path: "/",
       })
       .status(200)
       .json(info);

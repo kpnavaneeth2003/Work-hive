@@ -23,14 +23,13 @@ function Navbar() {
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
-
   const { currentUser, logout } = useContext(AuthContext);
 
   const userMenuRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
-      setActive(window.scrollY > 0);
+      setActive(window.scrollY > 10);
     };
 
     handleScroll();
@@ -85,7 +84,7 @@ function Navbar() {
   const isActiveNavbar = active || pathname !== "/";
 
   return (
-    <div className={isActiveNavbar ? "navbar active" : "navbar"}>
+    <header className={isActiveNavbar ? "navbar active" : "navbar"}>
       <div className="container">
         <Link className="link logo" to="/">
           <span className="text">Workhive</span>
@@ -95,12 +94,16 @@ function Navbar() {
         <div className="links">
           {!currentUser && (
             <>
-              <span onClick={() => navigate("/gigs")}>Explore Services</span>
-              <Link to="/login" className="link">
+              <span className="navItem" onClick={() => navigate("/gigs")}>
+                Explore Services
+              </span>
+
+              <Link to="/login" className="link navItem">
                 Sign in
               </Link>
+
               <Link className="link" to="/register">
-                <button>Join</button>
+                <button className="joinBtn">Join</button>
               </Link>
             </>
           )}
@@ -108,7 +111,10 @@ function Navbar() {
           {currentUser && (
             <>
               {!currentUser.isSeller && (
-                <span onClick={() => navigate("/register?seller=true")}>
+                <span
+                  className="navItem sellerCta"
+                  onClick={() => navigate("/register?seller=true")}
+                >
                   Become a Seller
                 </span>
               )}
@@ -127,14 +133,28 @@ function Navbar() {
                 }}
               >
                 <img src={currentUser.img || "/img/noavatar.jpg"} alt="User" />
-                <span>{currentUser.username}</span>
+                <span className="username">{currentUser.username}</span>
+                <span className={`chevron ${open ? "rotate" : ""}`}>▾</span>
 
                 {open && (
                   <div className="options" onClick={(e) => e.stopPropagation()}>
+                    <div className="menuHeader">
+                      <img
+                        src={currentUser.img || "/img/noavatar.jpg"}
+                        alt="User"
+                      />
+                      <div>
+                        <strong>{currentUser.username}</strong>
+                        <span>
+                          {currentUser.isSeller ? "Service Provider" : "Customer"}
+                        </span>
+                      </div>
+                    </div>
+
                     {currentUser.isSeller && (
                       <>
                         <Link
-                          className="link"
+                          className="link optionItem"
                           to="/mygigs"
                           onClick={() => setOpen(false)}
                         >
@@ -142,7 +162,7 @@ function Navbar() {
                         </Link>
 
                         <Link
-                          className="link"
+                          className="link optionItem"
                           to="/add"
                           onClick={() => setOpen(false)}
                         >
@@ -152,7 +172,7 @@ function Navbar() {
                     )}
 
                     <Link
-                      className="link"
+                      className="link optionItem"
                       to="/orders"
                       onClick={() => setOpen(false)}
                     >
@@ -160,7 +180,7 @@ function Navbar() {
                     </Link>
 
                     <Link
-                      className="link msgLink"
+                      className="link optionItem msgLink"
                       to="/messages"
                       onClick={() => setOpen(false)}
                     >
@@ -173,9 +193,8 @@ function Navbar() {
                     </Link>
 
                     <span
-                      className="link"
+                      className="optionItem logoutItem"
                       onClick={handleLogout}
-                      style={{ cursor: "pointer" }}
                     >
                       Logout
                     </span>
@@ -203,7 +222,7 @@ function Navbar() {
           </div>
         </>
       )}
-    </div>
+    </header>
   );
 }
 

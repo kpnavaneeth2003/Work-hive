@@ -2,50 +2,66 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: linear-gradient(135deg, #0f172a, #1f2937);
-  color: white;
+  background: linear-gradient(135deg, #0b1324, #1e293b);
+  color: #ffffff;
   position: sticky;
   top: 0;
   z-index: 999;
-  transition: 0.3s all ease;
-  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.12);
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+  backdrop-filter: saturate(180%) blur(4px);
 
   &.active {
     background: rgba(255, 255, 255, 0.96);
     color: #111827;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
     box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
 
     .container {
       .logo {
         .dot {
-          color: #111827;
+          color: #2563eb;
         }
       }
 
       .links {
+        .navItem:hover,
+        .link:hover {
+          color: #2563eb;
+        }
+
+        .sellerCta {
+          color: #111827;
+        }
+
         .user {
           &:hover {
             background: rgba(17, 24, 39, 0.05);
+            transform: translateY(-1px);
           }
 
           img {
             border-color: rgba(17, 24, 39, 0.08);
           }
 
-          .options {
-            color: #4b5563;
+          .username {
+            color: #111827;
+            opacity: 1;
+          }
+
+          .chevron {
+            color: #6b7280;
           }
         }
 
-        button {
-          background-color: #111827 !important;
-          color: #ffffff !important;
-          border: 1px solid #111827 !important;
+        .joinBtn {
+          background: #111827;
+          color: #ffffff;
+          border: 1px solid #111827;
 
           &:hover {
-            background-color: #000000 !important;
-            border-color: #000000 !important;
+            background: #000000;
+            border-color: #000000;
           }
         }
       }
@@ -71,109 +87,193 @@
     align-items: center;
     justify-content: space-between;
     padding: 18px 20px;
+    gap: 20px;
+  }
 
-    .logo {
-      display: inline-flex;
-      align-items: center;
-      text-decoration: none;
-      font-size: 32px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: inherit;
+    flex-shrink: 0;
+
+    .text {
       color: inherit;
+    }
 
-      .text {
-        color: inherit;
-      }
+    .dot {
+      font-weight: 800;
+      color: #3b82f6;
+    }
+  }
 
-      .dot {
-        font-weight: 800;
-        color: #f9fafb;
+  .links {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    font-weight: 500;
+    min-width: 0;
+
+    .link {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .navItem,
+    .link {
+      white-space: nowrap;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .navItem:hover,
+    .link:hover {
+      opacity: 0.9;
+    }
+
+    .sellerCta {
+      font-weight: 600;
+      color: #fbbf24;
+    }
+
+    .joinBtn {
+      color: white;
+      padding: 10px 18px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      background: transparent;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #ffffff;
+        color: #111827;
+        border-color: #ffffff;
       }
     }
 
-    .links {
+    .user {
       display: flex;
       align-items: center;
-      gap: 22px;
-      font-family: "Montserrat", sans-serif;
-      font-weight: 500;
+      gap: 10px;
+      cursor: pointer;
+      position: relative;
+      padding: 6px 10px;
+      border-radius: 999px;
+      transition: 0.2s ease;
+      min-width: 0;
 
-      span {
-        white-space: nowrap;
-        cursor: pointer;
-        transition: 0.2s ease;
-
-        &:hover {
-          opacity: 0.8;
-        }
+      &:hover {
+        background: rgba(255, 255, 255, 0.12);
+        transform: translateY(-1px);
       }
 
-      .user {
+      img {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid rgba(255, 255, 255, 0.14);
+        flex-shrink: 0;
+      }
+
+      .username {
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-weight: 600;
+        color: #ffffff;
+        opacity: 0.95;
+      }
+
+      .chevron {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.85);
+        transition: transform 0.2s ease;
+      }
+
+      .chevron.rotate {
+        transform: rotate(180deg);
+      }
+
+      .options {
+        position: absolute;
+        top: 58px;
+        right: 0;
+        padding: 10px;
+        background: #ffffff;
+        border-radius: 18px;
+        z-index: 999;
+        border: 1px solid #e5e7eb;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        width: 240px;
+        color: #4b5563;
+        box-shadow: 0 18px 30px rgba(15, 23, 42, 0.12);
+      }
+
+      .menuHeader {
         display: flex;
         align-items: center;
         gap: 10px;
-        cursor: pointer;
-        position: relative;
-        padding: 6px 10px;
-        border-radius: 999px;
-        transition: 0.2s ease;
-
-        &:hover {
-          background: rgba(255, 255, 255, 0.08);
-        }
+        padding: 10px 12px 14px;
+        border-bottom: 1px solid #f1f5f9;
+        margin-bottom: 4px;
 
         img {
-          width: 36px;
-          height: 36px;
-          border-radius: 50%;
-          object-fit: cover;
-          border: 2px solid rgba(255, 255, 255, 0.14);
+          width: 42px;
+          height: 42px;
+          border: 1px solid #e5e7eb;
         }
 
-        .options {
-          position: absolute;
-          top: 56px;
-          right: 0;
-          padding: 10px;
-          background-color: white;
-          border-radius: 16px;
-          z-index: 999;
-          border: 1px solid #e5e7eb;
+        div {
           display: flex;
           flex-direction: column;
-          gap: 4px;
-          width: 220px;
-          font-weight: 500;
-          color: #4b5563;
-          box-shadow: 0 18px 30px rgba(15, 23, 42, 0.12);
+          min-width: 0;
+        }
 
-          a,
-          span {
-            padding: 10px 12px;
-            border-radius: 10px;
+        strong {
+          font-size: 14px;
+          color: #111827;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
 
-            &:hover {
-              background: #f3f4f6;
-            }
-          }
+        span {
+          font-size: 12px;
+          color: #6b7280;
         }
       }
 
-      button {
-        color: white;
-        padding: 10px 18px;
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        background-color: transparent;
-        cursor: pointer;
-        font-weight: 600;
-        transition: 0.2s ease;
+      .optionItem {
+        padding: 10px 12px;
+        border-radius: 10px;
+        transition: background 0.2s ease;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
 
-        &:hover {
-          background-color: #ffffff;
-          color: #111827;
-          border-color: #ffffff;
-        }
+      .optionItem:hover {
+        background: #f3f4f6;
+      }
+
+      .logoutItem {
+        cursor: pointer;
+        color: #dc2626;
+      }
+
+      .logoutItem:hover {
+        background: #fef2f2;
       }
     }
   }
@@ -194,19 +294,24 @@
     gap: 18px;
     color: rgba(255, 255, 255, 0.78);
     font-weight: 500;
-    font-family: "Montserrat", sans-serif;
     font-size: 14px;
     overflow-x: auto;
+    scrollbar-width: none;
+  }
 
-    .menuLink {
-      color: inherit;
-      text-decoration: none;
-      white-space: nowrap;
-      transition: 0.2s ease;
+  .menu::-webkit-scrollbar {
+    display: none;
+  }
 
-      &:hover {
-        color: #ffffff;
-      }
+  .menuLink {
+    color: inherit;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: 0.2s ease;
+    padding-bottom: 2px;
+
+    &:hover {
+      color: #ffffff;
     }
   }
 }
@@ -220,31 +325,38 @@
 
 .msgBadge {
   background: #ef4444;
-  color: #fff;
+  color: #ffffff;
   font-size: 11px;
   padding: 3px 8px;
   border-radius: 999px;
   font-weight: 700;
   line-height: 1.3;
-  min-width: 20px;
+  min-width: 22px;
   text-align: center;
+  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);
 }
 
 @media (max-width: 992px) {
   .navbar {
     .container {
       padding: 16px;
+    }
 
-      .logo {
-        font-size: 28px;
+    .logo {
+      font-size: 28px;
+    }
+
+    .links {
+      gap: 14px;
+      font-size: 14px;
+
+      .joinBtn {
+        padding: 9px 14px;
       }
 
-      .links {
-        gap: 14px;
-        font-size: 14px;
-
-        button {
-          padding: 9px 14px;
+      .user {
+        .username {
+          max-width: 90px;
         }
       }
     }
@@ -252,6 +364,7 @@
     .menu {
       padding: 10px 16px;
       font-size: 13px;
+      justify-content: flex-start;
     }
   }
 }
@@ -261,16 +374,62 @@
     .container {
       flex-wrap: wrap;
       gap: 12px;
+    }
 
-      .links {
-        width: 100%;
-        justify-content: flex-end;
-        gap: 12px;
-      }
+    .links {
+      width: 100%;
+      justify-content: flex-end;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      font-size: 26px;
     }
 
     .menu {
       justify-content: flex-start;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .navbar {
+    .container {
+      padding: 14px;
+    }
+
+    .links {
+      font-size: 13px;
+      gap: 10px;
+
+      .user {
+        padding: 4px 8px;
+
+        img {
+          width: 34px;
+          height: 34px;
+        }
+
+        .username {
+          max-width: 70px;
+        }
+
+        .options {
+          width: 220px;
+          right: -6px;
+        }
+      }
+
+      .joinBtn {
+        padding: 8px 12px;
+        border-radius: 10px;
+      }
+    }
+
+    .menu {
+      padding: 10px 14px;
+      gap: 16px;
     }
   }
 }
