@@ -5,13 +5,19 @@ import newRequest from "../../utils/newRequest";
 
 function Messages() {
   const [conversations, setConversations] = useState([]);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [activeConversationId, setActiveConversationId] = useState(null);
 
+  const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
 
   useEffect(() => {
     const fetchConversations = async () => {
       try {
+        setLoading(true);
+        setError("");
+
         const res = await newRequest.get("/conversations");
 
         const normalizedConvos = res.data.map((c) => ({
@@ -23,6 +29,9 @@ function Messages() {
         setConversations(normalizedConvos);
       } catch (err) {
         console.log(err);
+        setError("Failed to load conversations.");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -49,15 +58,14 @@ function Messages() {
     if (!lastMsg) return "Open chat";
 
     if (isLastMessageLocation(c)) {
-      return lastMsg.desc
-        ? `📍 Location - ${lastMsg.desc}`
-        : "📍 Location";
+      return lastMsg.desc ? `📍 Location - ${lastMsg.desc}` : "📍 Location";
     }
 
     return lastMsg.desc || "Open chat";
   };
 
   const handleConversationClick = async (c) => {
+    setActiveConversationId(c._id);
     navigate(`/messages/${c.id}`);
 
     try {
@@ -80,39 +88,53 @@ function Messages() {
   return (
     <div className="messagesPage">
       <div className="sidebar">
-        <div className="sidebarHeader">Messages</div>
+        <div className="sidebarHeader">
+          <div>
+            <h2>Messages</h2>
+            <p>Stay connected with buyers and sellers.</p>
+          </div>
+        </div>
 
-        {conversations.length === 0 ? (
+        {loading ? (
+          <div className="stateBox">Loading conversations...</div>
+        ) : error ? (
+          <div className="stateBox errorBox">{error}</div>
+        ) : conversations.length === 0 ? (
           <div className="emptyState">
             <h3>No conversations yet</h3>
             <p>Your chats with buyers and sellers will appear here.</p>
           </div>
         ) : (
-          conversations.map((c) => (
-            <div
-              key={c._id}
-              className={`conversationItem ${isUnread(c) ? "unread" : ""}`}
-              onClick={() => handleConversationClick(c)}
-            >
-              <img
-                src={c.user?.img || "/img/noavatar.jpg"}
-                alt="avatar"
-                className="avatar"
-              />
+          <div className="conversationList">
+            {conversations.map((c) => (
+              <div
+                key={c._id}
+                className={`conversationItem ${isUnread(c) ? "unread" : ""} ${
+                  activeConversationId === c._id ? "active" : ""
+                }`}
+                onClick={() => handleConversationClick(c)}
+              >
+                <img
+                  src={c.user?.img || "/img/noavatar.jpg"}
+                  alt="avatar"
+                  className="avatar"
+                />
 
-              <div className="conversationContent">
-                <span className="username">{c.user?.username || "User"}</span>
-                <span className="lastMessage">{getPreviewText(c)}</span>
+                <div className="conversationContent">
+                  <span className="username">{c.user?.username || "User"}</span>
+                  <span className="lastMessage">{getPreviewText(c)}</span>
+                </div>
+
+                {isUnread(c) && <span className="badge"></span>}
               </div>
-
-              {isUnread(c) && <span className="badge"></span>}
-            </div>
-          ))
+            ))}
+          </div>
         )}
       </div>
 
       <div className="chatWindow empty">
-        <div className="emptyState">
+        <div className="chatPlaceholder">
+          <div className="placeholderIcon">💬</div>
           <h3>Select a conversation</h3>
           <p>Choose a chat from the left to view messages and reply.</p>
         </div>

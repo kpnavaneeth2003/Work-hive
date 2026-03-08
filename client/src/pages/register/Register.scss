@@ -1,127 +1,312 @@
 .register {
+  min-height: 100vh;
+  padding: 60px 20px;
+  background: linear-gradient(135deg, #f8fafc, #eef2f7);
   display: flex;
-  align-items: center;
   justify-content: center;
-  background-color: rgb(211, 209, 196);
-  form {
-    width: 960px;
-    padding: 100px 0px;
-    display: flex;
-    gap: 120px;
+  align-items: center;
+
+  .registerContainer {
+    width: 100%;
+    max-width: 1200px;
+  }
+
+  .registerHeader {
+    text-align: center;
+    margin-bottom: 32px;
+
+    .badge {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: #e8f1ff;
+      color: #2563eb;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
 
     h1 {
-      color: gray;
-      margin-bottom: 20px;
+      font-size: 42px;
+      line-height: 1.2;
+      color: #111827;
+      margin-bottom: 12px;
+      font-weight: 700;
     }
 
-    .left,
-    .right {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      justify-content: space-between;
+    p {
+      max-width: 700px;
+      margin: 0 auto;
+      color: #6b7280;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+  }
 
-      label {
-        color: gray;
-        font-size: 18px;
+  .registerForm {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .formCard {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    border: 1px solid #edf0f5;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .sectionTitle {
+    h2 {
+      font-size: 24px;
+      color: #111827;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    p {
+      color: #6b7280;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+  }
+
+  .fieldGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    label {
+      color: #374151;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid #d1d5db;
+      border-radius: 14px;
+      font-size: 15px;
+      color: #111827;
+      background: #fff;
+      transition: all 0.25s ease;
+      box-sizing: border-box;
+      outline: none;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #9ca3af;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 140px;
+    }
+
+    input[type="file"] {
+      padding: 12px;
+      background: #f9fafb;
+      cursor: pointer;
+    }
+  }
+
+  .passwordField {
+    position: relative;
+
+    input {
+      padding-right: 80px;
+    }
+
+    .togglePassword {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: none;
+      background: transparent;
+      color: #2563eb;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 6px 8px;
+      border-radius: 8px;
+      transition: background 0.2s ease;
+    }
+
+    .togglePassword:hover {
+      background: #eff6ff;
+    }
+  }
+
+  .imagePreview {
+    margin-top: 8px;
+
+    img {
+      width: 88px;
+      height: 88px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 3px solid #e5e7eb;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  .sellerBox {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 18px 20px;
+
+    .sellerText {
+      h3 {
+        font-size: 16px;
+        color: #111827;
+        margin-bottom: 4px;
+        font-weight: 700;
       }
 
-      input,
-      textarea {
-        padding: 20px;
-        border: 1px solid rgb(216, 214, 214);
-      }
-
-      button {
-        border: none;
-        padding: 20px;
-        color: white;
-        font-weight: 500;
-        font-size: 18px;
-        background-color: #4376a2;
-        cursor: pointer;
-      }
-
-      .toggle {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-
-        .switch {
-          position: relative;
-          display: inline-block;
-          width: 50px;
-          height: 24px;
-        }
-
-        
-        .switch input {
-          opacity: 0;
-          width: 0;
-          height: 0;
-        }
-
-        .slider {
-          position: absolute;
-          cursor: pointer;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background-color: #ccc;
-          -webkit-transition: 0.4s;
-          transition: 0.4s;
-          border-radius: 24px;
-        }
-
-        .slider:before {
-          position: absolute;
-          content: "";
-          height: 16px;
-          width: 16px;
-          left: 4px;
-          bottom: 4px;
-          background-color: white;
-          -webkit-transition: 0.4s;
-          transition: 0.4s;
-          border-radius: 50%;
-        }
-
-        input:checked + .slider {
-          background-color: #2196f3;
-        }
-
-        input:focus + .slider {
-          box-shadow: 0 0 1px #2196f3;
-        }
-
-        input:checked + .slider:before {
-          -webkit-transform: translateX(26px);
-          -ms-transform: translateX(26px);
-          transform: translateX(26px);
-        }
+      p {
+        color: #6b7280;
+        font-size: 14px;
+        line-height: 1.6;
       }
     }
   }
-}
-.passwordField {
-  position: relative;
-  width: 100%;
 
-  input {
-    width: 100%;
-    padding-right: 45px;
-    box-sizing: border-box;
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 58px;
+    height: 30px;
+    flex-shrink: 0;
+
+    input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      cursor: pointer;
+      background-color: #cbd5e1;
+      transition: 0.3s;
+      border-radius: 999px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 4px;
+      top: 4px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    input:checked + .slider {
+      background-color: #2563eb;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(28px);
+    }
   }
 
-  .togglePassword {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
+  .errorMessage {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    padding: 14px 16px;
+    border-radius: 14px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .submitBtn {
+    margin-top: auto;
+    border: none;
+    padding: 16px 20px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
     cursor: pointer;
-    font-size: 18px;
-    user-select: none;
+    transition: all 0.25s ease;
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+  }
+
+  .submitBtn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 24px rgba(37, 99, 235, 0.24);
+  }
+
+  .submitBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  @media (max-width: 992px) {
+    .registerForm {
+      grid-template-columns: 1fr;
+    }
+
+    .registerHeader h1 {
+      font-size: 34px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    padding: 32px 14px;
+
+    .formCard {
+      padding: 22px;
+      border-radius: 20px;
+    }
+
+    .registerHeader {
+      margin-bottom: 22px;
+
+      h1 {
+        font-size: 28px;
+      }
+
+      p {
+        font-size: 14px;
+      }
+    }
+
+    .sellerBox {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .switch {
+      align-self: flex-end;
+    }
   }
 }

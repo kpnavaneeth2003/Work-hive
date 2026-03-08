@@ -31,56 +31,83 @@ const Orders = () => {
 
   return (
     <div className="orders">
-      {isLoading ? (
-        "loading"
-      ) : error ? (
-        "error"
-      ) : (
-        <div className="container">
-          <h1>Services</h1>
+      <div className="container">
+        <div className="pageHeader">
+          <div>
+            <h1>{currentUser?.isSeller ? "Manage Orders" : "My Orders"}</h1>
+            <p>
+              {currentUser?.isSeller
+                ? "Track your buyers, service requests, and communication."
+                : "View your booked services and contact your service providers."}
+            </p>
+          </div>
+        </div>
 
-          <table>
-            <thead>
-              <tr>
-                <th>{currentUser?.isSeller ? "Buyer" : "Seller"}</th>
-                <th>Title</th>
-                <th>Price</th>
-                <th>Status</th>
-                <th>Contact</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {data?.length === 0 ? (
+        {isLoading ? (
+          <div className="stateBox">Loading orders...</div>
+        ) : error ? (
+          <div className="stateBox errorBox">Something went wrong while loading orders.</div>
+        ) : data?.length === 0 ? (
+          <div className="emptyState">
+            <h2>No orders yet</h2>
+            <p>
+              {currentUser?.isSeller
+                ? "You don't have any service orders yet."
+                : "You haven't placed any orders yet."}
+            </p>
+          </div>
+        ) : (
+          <div className="tableWrapper">
+            <table>
+              <thead>
                 <tr>
-                  <td colSpan="4">No orders yet</td>
+                  <th>{currentUser?.isSeller ? "Buyer" : "Seller"}</th>
+                  <th>Service</th>
+                  <th>Price</th>
+                  <th>Status</th>
+                  <th>Contact</th>
                 </tr>
-              ) : (
-                data.map((order) => (
+              </thead>
+
+              <tbody>
+                {data.map((order) => (
                   <tr key={order._id}>
-                    <td>
+                    <td className="nameCell">
                       {currentUser?.isSeller
-                      ? order.buyerName || "Unknown"
-                      : order.sellerName || "Unknown"}
+                        ? order.buyerName || "Unknown"
+                        : order.sellerName || "Unknown"}
                     </td>
-                    <td>{order.title}</td>
-                    <td>₹{order.price}</td>
-                    <td>{order.isCompleted ? "Completed" : "Pending"}</td>
+
+                    <td className="titleCell">{order.title}</td>
+
+                    <td className="priceCell">₹{order.price}</td>
+
                     <td>
-                      <img
-                        className="message"
-                        src="./img/message.png"
-                        alt=""
+                      <span
+                        className={`statusBadge ${
+                          order.isCompleted ? "completed" : "pending"
+                        }`}
+                      >
+                        {order.isCompleted ? "Completed" : "Pending"}
+                      </span>
+                    </td>
+
+                    <td>
+                      <button
+                        className="contactBtn"
                         onClick={() => handleContact(order)}
-                      />
+                        type="button"
+                      >
+                        Message
+                      </button>
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      )}
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

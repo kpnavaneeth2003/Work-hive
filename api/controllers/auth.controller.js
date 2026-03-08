@@ -2,17 +2,31 @@ import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-export const register = async (req, res, next) => {
+export const register = async (req, res) => {
   try {
-    const hash = bcrypt.hashSync(req.body.password, 5);
-    const newUser = new User({ ...req.body, password: hash });
+    const newUser = new User(req.body);
     await newUser.save();
+
     res.status(201).json({ message: "User created successfully" });
   } catch (err) {
-    next(err);
+    // Duplicate key error
+    if (err.code === 11000) {
+      const field = Object.keys(err.keyPattern)[0];
+
+      if (field === "username") {
+        return res.status(400).json({ message: "Username already exists" });
+      }
+
+      if (field === "email") {
+        return res.status(400).json({ message: "Email already exists" });
+      }
+
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
-
 export const login = async (req, res) => {
   try {
     const user = await User.findOne({ username: req.body.username });

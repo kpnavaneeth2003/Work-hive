@@ -1,14 +1,14 @@
 import React, { useState, useContext } from "react";
 import "./Login.scss";
 import newRequest from "../../utils/newRequest";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); 
-  const [error, setError] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -16,7 +16,13 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
+    setError("");
+
+    if (!username.trim() || !password.trim()) {
+      setError("Please enter both username and password.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -28,7 +34,13 @@ function Login() {
       login(res.data);
       navigate("/");
     } catch (err) {
-      setError(err.response?.data?.message || err.response?.data || "Login failed");
+      const errorMessage =
+        err?.response?.data?.message ||
+        err?.response?.data ||
+        err?.message ||
+        "Login failed. Please try again.";
+
+      setError(typeof errorMessage === "string" ? errorMessage : "Something went wrong.");
     } finally {
       setLoading(false);
     }
@@ -36,44 +48,65 @@ function Login() {
 
   return (
     <div className="login">
-      <form onSubmit={handleSubmit}>
-        <h1>Sign in</h1>
-
-        <label>Username</label>
-        <input
-          name="username"
-          type="text"
-          placeholder="johndoe"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-
-        <label>Password</label>
-
-      
-        <div className="passwordField">
-          <input
-            name="password"
-            type={showPassword ? "text" : "password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-
-          <span
-            className="togglePassword"
-            onClick={() => setShowPassword((prev) => !prev)}
-            title={showPassword ? "Hide password" : "Show password"}
-          >
-            {showPassword ? "🙈" : "👁️"}
-          </span>
+      <div className="loginContainer">
+        <div className="loginHero">
+          <h1>Sign in to your account</h1>
+          <p>
+            Access your dashboard, manage your profile, and continue where you left off.
+          </p>
         </div>
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </button>
+        <form onSubmit={handleSubmit} className="loginCard">
+          <div className="cardHeader">
+            <h2>Login</h2>
+            <p>Enter your credentials to continue.</p>
+          </div>
 
-        {error && <span className="error">{error}</span>}
-      </form>
+          <div className="fieldGroup">
+            <label htmlFor="username">Username</label>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              placeholder="Enter your username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </div>
+
+          <div className="fieldGroup">
+            <label htmlFor="password">Password</label>
+            <div className="passwordField">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                className="togglePassword"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
+          </div>
+
+          {error && <div className="errorMessage">{error}</div>}
+
+          <button type="submit" className="submitBtn" disabled={loading}>
+            {loading ? "Logging in..." : "Sign In"}
+          </button>
+
+          <p className="footerText">
+            Don&apos;t have an account? <Link to="/register">Create one</Link>
+          </p>
+        </form>
+      </div>
     </div>
   );
 }
