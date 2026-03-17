@@ -6,7 +6,6 @@ import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
-
 import adminRoute from "./routes/admin.route.js";
 import authRoute from "./routes/auth.route.js";
 import userRoute from "./routes/user.route.js";
@@ -23,11 +22,22 @@ import locationRoute from "./routes/location.route.js";
 const app = express();
 mongoose.set("strictQuery", true);
 
+const PORT = process.env.PORT || 8800;
+const CLIENT_URL = process.env.CLIENT_URL;
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(
+  cors({
+    origin: [CLIENT_URL, "http://localhost:5173"],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 app.use(cookieParser());
 
+app.get("/", (req, res) => {
+  res.status(200).json({ message: "API is running" });
+});
 
 app.use("/api/admin", adminRoute);
 app.use("/api/auth", authRoute);
@@ -42,21 +52,19 @@ app.use("/api/categories", categoryRoute);
 app.use("/api/search", searchRoute);
 app.use("/api/location", locationRoute);
 
-
 app.use((err, req, res, next) => {
+  console.error(err);
   const status = err.status || 500;
   const message = err.message || "Something went wrong!";
   return res.status(status).json({ message });
 });
 
-
-const PORT = process.env.PORT || 8800;
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB connected!");
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Server running on port ${PORT}`);
+    });
   })
   .catch((err) => console.error("MongoDB connection failed:", err));
-
-

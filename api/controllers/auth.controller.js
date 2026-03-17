@@ -61,12 +61,13 @@ export const login = async (req, res) => {
     );
 
     const { password, ...info } = user._doc;
+    const isProd = process.env.NODE_ENV === "production";
 
     res
       .cookie("access_token", token, {
         httpOnly: true,
-        sameSite: "lax",
-        secure: false,
+        sameSite: isProd ? "none" : "lax",
+        secure: isProd,
         path: "/",
       })
       .status(200)
@@ -77,11 +78,13 @@ export const login = async (req, res) => {
 };
 
 export const logout = (req, res) => {
+  const isProd = process.env.NODE_ENV === "production";
+
   res
     .clearCookie("access_token", {
       httpOnly: true,
-      sameSite: "lax",
-      secure: false,
+      sameSite: isProd ? "none" : "lax",
+      secure: isProd,
       path: "/",
     })
     .status(200)
